@@ -12,9 +12,12 @@ public class TestFinal {
 
     public static void main(String[] args) {
 
-        final List<String> strList = new ArrayList<>();
+        final List<String> strList = new ArrayList<>(10);
+        strList.add(2, "ooo");
         strList.add("Hello");
         strList.add("world");
+
+        strList.remove(1);
 
 //        List<String> unmodifyList = List.of("Hello", "World");  //java 9特性
 
