@@ -1,6 +1,7 @@
 package com.test;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -10,10 +11,14 @@ import java.util.List;
 
 public class TestFinal {
 
+    private final static List list = new ArrayList();
+
+
     public static void main(String[] args) {
+         final Integer ss;
 
         final List<String> strList = new ArrayList<>(10);
-        strList.add(2, "ooo");
+//        strList.add(2, "ooo");
         strList.add("Hello");
         strList.add("world");
 
@@ -21,11 +26,18 @@ public class TestFinal {
 
 //        List<String> unmodifyList = List.of("Hello", "World");  //java 9特性
 
-        System.out.println(strList);
+//        System.out.println(strList);
 
 
         StringBuffer stringBuffer = new StringBuffer(32);
 
         StringBuilder sb = new StringBuilder(32);
+
+        list.add("ddd");
+        list.add("dddddd");
+
+        System.out.println(list);
+
+
     }
 }
