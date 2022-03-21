@@ -36,8 +36,14 @@ public class TestFinal {
         list.add("ddd");
         list.add("dddddd");
 
-        System.out.println(list);
+//        System.out.println(list);
 
+
+//        Integer i = 20;
+////        Integer j =20;
+        Integer i = new Integer(20);
+        Integer j = new Integer(20);
+        System.out.println(i == j);
 
     }
 }
