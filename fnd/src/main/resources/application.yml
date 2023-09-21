@@ -1,0 +1,42 @@
+
+# spring ??
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://xxx:3306/db?rewriteBatchedStatements=true&useSSL=false&serverTimezone=GMT%2B8
+    username: admin
+    password: pmostc@123
+    type: com.alibaba.druid.pool.DruidDataSource
+
+#mybatis
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*.xml
+  #???????package?????????
+  typeAliasesPackage: com.fnd.psi.model
+  global-config:
+    # ???????
+    db-config:
+      #????  AUTO:"???ID??", INPUT:"????ID",ID_WORKER:"????ID (??????ID)", UUID:"????ID UUID";
+      id-type: auto
+      #???? IGNORED:"????",NOT_NULL:"? NULL ??"),NOT_EMPTY:"????"
+      field-strategy: not_empty
+      #???????
+      column-underline: true
+      #??????????
+      #capital-mode: true
+      #??????
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+      db-type: mysql
+    sql-parser-cache: true
+  # ????
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    # ??sql
+    # log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+server:
+  port: 8080
+    # # ???????????
+    #servlet:
+  # context-path: "/api"
