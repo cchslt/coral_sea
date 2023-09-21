@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fnd.psi.mapper.UserMapper;
 import com.fnd.psi.model.PsiUser;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import java.util.List;
  * @See:
  */
 @Service
+@Slf4j
 public class UserService extends ServiceImpl<UserMapper, PsiUser> {
 
     @Autowired
@@ -26,6 +28,7 @@ public class UserService extends ServiceImpl<UserMapper, PsiUser> {
         queryWrapper.eq(PsiUser::getIsDeleted, 0);
         final List<PsiUser> psiUsers = userMapper.selectList(queryWrapper);
 
+        log.info("sdfsdfdsf");
         return psiUsers;
     }
 }
