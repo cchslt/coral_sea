@@ -11,8 +11,8 @@ import com.fnd.psi.model.PsiUser;
 import com.fnd.psi.service.UserService;
 import com.fnd.psi.utils.CopyBeanUtils;
 import com.fnd.psi.utils.ResultUtils;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,11 +25,11 @@ import java.util.List;
  */
 @Service
 @Slf4j
+@AllArgsConstructor
 public class UserServiceImpl extends ServiceImpl<UserMapper, PsiUser> implements UserService {
-    @Autowired
+
     ResultUtils resultUtils;
-    @Autowired
-    private UserMapper userMapper;
+    UserMapper userMapper;
 
     @Override
     public List<PsiUser> queryUserList() {

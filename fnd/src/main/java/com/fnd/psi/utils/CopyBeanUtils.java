@@ -46,7 +46,7 @@ public class CopyBeanUtils {
      * @param <R>
      * @return
      */
-    public <T, R> List<T> copyList(List<R> sourceList, Class<T> clazz) {
+    public static <T, R> List<T> copyList(List<R> sourceList, Class<T> clazz) {
         if (CollUtil.isEmpty(sourceList)) {
             return CollUtil.newArrayList();
         }
@@ -58,7 +58,7 @@ public class CopyBeanUtils {
     /**
      * 复制对象
      */
-    public <T, K> T convert(K source, Class<T> clazz) {
+    public static <T, K> T convert(K source, Class<T> clazz) {
         return BeanUtil.copyProperties(source, clazz);
     }
 }
