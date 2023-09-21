@@ -1,12 +1,10 @@
 package com.fnd.psi.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.fnd.psi.mapper.UserMapper;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.fnd.psi.dto.PageDTO;
+import com.fnd.psi.dto.vo.ResultVo;
 import com.fnd.psi.model.PsiUser;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -16,19 +14,10 @@ import java.util.List;
  * @Desc:
  * @See:
  */
-@Service
-@Slf4j
-public class UserService extends ServiceImpl<UserMapper, PsiUser> {
 
-    @Autowired
-    private UserMapper userMapper;
+public interface UserService extends IService<PsiUser> {
 
-    public List<PsiUser> queryUserList() {
-        LambdaQueryWrapper<PsiUser> queryWrapper = new LambdaQueryWrapper();
-        queryWrapper.eq(PsiUser::getIsDeleted, 0);
-        final List<PsiUser> psiUsers = userMapper.selectList(queryWrapper);
+    List<PsiUser> queryUserList();
 
-        log.info("sdfsdfdsf");
-        return psiUsers;
-    }
+    ResultVo<PageDTO<PsiUser>> pageUserList();
 }

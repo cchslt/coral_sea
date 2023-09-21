@@ -1,5 +1,7 @@
 package com.fnd.psi.controller;
 
+import com.fnd.psi.dto.PageDTO;
+import com.fnd.psi.dto.vo.ResultVo;
 import com.fnd.psi.model.PsiUser;
 import com.fnd.psi.service.UserService;
 import io.swagger.annotations.Api;
@@ -27,5 +29,11 @@ public class TestController {
     @ApiOperation(value = "测试", httpMethod = "GET")
     public List<PsiUser> test() {
         return userService.queryUserList();
+    }
+
+    @GetMapping("testPage")
+    @ApiOperation(value = "测试", httpMethod = "GET")
+    public ResultVo<PageDTO<PsiUser>> testPage() {
+        return userService.pageUserList();
     }
 }
