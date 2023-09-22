@@ -3,6 +3,7 @@ package com.fnd.psi.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fnd.psi.dto.PageDTO;
+import com.fnd.psi.dto.user.UserLoginDTO;
 import com.fnd.psi.dto.vo.ResultVo;
 import com.fnd.psi.model.PsiUser;
 
@@ -20,4 +21,11 @@ public interface UserService extends IService<PsiUser> {
     List<PsiUser> queryUserList();
 
     ResultVo<PageDTO<PsiUser>> pageUserList();
+
+    /**
+     * 登录信息
+     * @param userLoginDTO
+     * @return
+     */
+    ResultVo userLogin(UserLoginDTO userLoginDTO);
 }

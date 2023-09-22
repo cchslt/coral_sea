@@ -1,0 +1,13 @@
+package com.fnd.psi.security;
+
+import java.lang.annotation.*;
+
+
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface FndPreAuthorize {
+
+	String value() default "";
+
+}

@@ -23,6 +23,14 @@ public interface CommonConstant {
      */
     String FAIL_MESSAGE = "fail";
 
+
+    /**
+     * 错误标记
+     */
+    Integer ERROR = 0;
+
+    String ERROR_MESSAGE = "error";
+
     /**----------常用符号--避免写错----------**/
 
     /**

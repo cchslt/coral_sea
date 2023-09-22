@@ -24,6 +24,7 @@
         <mybatis-plus.version>3.4.3</mybatis-plus.version>
         <hutool.version>5.3.5</hutool.version>
         <druid.version>1.2.5</druid.version>
+        <ttl.version>2.10.1</ttl.version>
     </properties>
 
     <dependencies>
@@ -180,6 +181,13 @@
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
             <version>${druid.version}</version>
+        </dependency>
+
+        <!-- 阿里巴巴TTl -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>transmittable-thread-local</artifactId>
+            <version>${ttl.version}</version>
         </dependency>
 
         <!--guava 依赖包-->

@@ -1,5 +1,5 @@
 
-# spring ??
+# spring 配置
 spring:
   application:
     name: fnd-psi
@@ -9,36 +9,29 @@ spring:
     username: root
     password: 123456
     type: com.alibaba.druid.pool.DruidDataSource
+  messages:
+    #国际化配置
+    basename: i18n/messages
 
 #mybatis
 mybatis-plus:
   mapper-locations: classpath:/mapper/*.xml
-  #???????package?????????
   typeAliasesPackage: com.fnd.psi.model
   global-config:
-    # ???????
     db-config:
-      #????  AUTO:"???ID??", INPUT:"????ID",ID_WORKER:"????ID (??????ID)", UUID:"????ID UUID";
       id-type: auto
-      #???? IGNORED:"????",NOT_NULL:"? NULL ??"),NOT_EMPTY:"????"
       field-strategy: not_empty
-      #???????
       column-underline: true
-      #??????????
       #capital-mode: true
-      #??????
       logic-delete-value: 1
       logic-not-delete-value: 0
       db-type: mysql
     sql-parser-cache: true
-  # ????
   configuration:
     map-underscore-to-camel-case: true
     cache-enabled: false
-    # ??sql
     # log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 server:
-  port: 8080
-    # # ???????????
+  port: 8088
     #servlet:
   # context-path: "/api"
