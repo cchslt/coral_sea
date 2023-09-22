@@ -1,7 +1,7 @@
 package com.fnd.psi.exception;
 
 import cn.hutool.core.util.StrUtil;
-import com.fnd.psi.dto.vo.ResultVo;
+import com.fnd.psi.dto.ResultVo;
 import com.fnd.psi.utils.ResultVoUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

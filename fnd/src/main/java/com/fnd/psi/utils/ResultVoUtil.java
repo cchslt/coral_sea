@@ -2,7 +2,7 @@ package com.fnd.psi.utils;
 
 
 import com.fnd.psi.constant.CommonConstant;
-import com.fnd.psi.dto.vo.ResultVo;
+import com.fnd.psi.dto.ResultVo;
 
 /**
  * ResultVo工具类

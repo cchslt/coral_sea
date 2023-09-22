@@ -1,4 +1,4 @@
-package com.fnd.psi.dto.vo;
+package com.fnd.psi.dto;
 
 
 import com.fnd.psi.constant.CommonConstant;

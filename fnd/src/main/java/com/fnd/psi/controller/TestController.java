@@ -1,7 +1,7 @@
 package com.fnd.psi.controller;
 
 import com.fnd.psi.dto.PageDTO;
-import com.fnd.psi.dto.vo.ResultVo;
+import com.fnd.psi.dto.ResultVo;
 import com.fnd.psi.model.PsiUser;
 import com.fnd.psi.security.FndPreAuthorize;
 import com.fnd.psi.service.UserService;

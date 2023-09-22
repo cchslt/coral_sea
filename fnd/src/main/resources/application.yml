@@ -5,9 +5,9 @@ spring:
     name: fnd-psi
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/psi?rewriteBatchedStatements=true&useSSL=false&serverTimezone=GMT%2B8
-    username: root
-    password: 123456
+    url: jdbc:mysql://simba-test-db:3306/egatee_psi?rewriteBatchedStatements=true&useSSL=false&serverTimezone=GMT%2B8
+    username: admin
+    password: pmostc@123
     type: com.alibaba.druid.pool.DruidDataSource
   messages:
     #国际化配置

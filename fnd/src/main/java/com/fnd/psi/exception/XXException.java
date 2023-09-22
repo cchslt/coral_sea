@@ -1,6 +1,6 @@
 package com.fnd.psi.exception;
 
-import com.fnd.psi.dto.vo.ResultVo;
+import com.fnd.psi.dto.ResultVo;
 import lombok.Data;
 
 /**

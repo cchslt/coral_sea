@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fnd.psi.mapper.RoleMapper">
+    <select id="getRoleInfoByUserId" resultType="com.fnd.psi.dto.vo.PsiUserRoleVO">
+        SELECT
+          r.*,
+          ur.user_id userId
+        FROM
+            t_psi_role r
+                LEFT JOIN t_psi_user_role ur ON r.id = ur.role_id
+        WHERE
+           r.is_deleted = 0
+          AND ur.is_deleted = 0
+        <if test="userIds != null and userIds.size() >0">
+            and ur.user_id in
+            <foreach collection="userIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+
+
+
+
+    </select>
+</mapper>
