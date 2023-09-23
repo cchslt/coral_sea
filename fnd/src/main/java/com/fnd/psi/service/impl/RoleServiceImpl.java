@@ -6,14 +6,14 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fnd.psi.dto.ResultVo;
 import com.fnd.psi.dto.user.PsiUserInfoDTO;
-import com.fnd.psi.dto.vo.PsiRoleVO;
-import com.fnd.psi.dto.vo.PsiUserRoleVO;
-import com.fnd.psi.dto.vo.RoleListDTO;
+import com.fnd.psi.dto.vo.*;
+import com.fnd.psi.mapper.PermissionMapper;
 import com.fnd.psi.mapper.RoleMapper;
 import com.fnd.psi.model.PsiRole;
 import com.fnd.psi.model.PsiUser;
 import com.fnd.psi.security.FndSecurityContextUtil;
 import com.fnd.psi.service.PermissionService;
+import com.fnd.psi.service.RolePermissionService;
 import com.fnd.psi.service.RoleService;
 import com.fnd.psi.utils.ResultVoUtil;
 import com.google.common.collect.Lists;
@@ -91,7 +91,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, PsiRole> implements
         BeanUtils.copyProperties(psiRole,roleVO);
 
         final ResultVo<List<PermissionDTO>> listResultVo = permissionService.permissionList();
-        List<PermissionDTO> listResultVoData = permissionService.getPermissionDTO(listResultVo.getData(), psiUserInfoUtils.getCurrentUser());
+        List<PermissionDTO> listResultVoData = listResultVo.getData();
         final List<PermissionVO> permissionVOS = permissionMapper.listMenusByRoleId(psiRole.getId());
 
         final Set<Long> virtualPermissionIds = listResultVoData.stream().filter(x -> x.getVirtual()).map(PermissionDTO::getId).collect(Collectors.toSet());

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fnd.psi.mapper.WarehouseUserRelationMapper">
+    <select id="getWarehouseInfoByUserIds"
+            resultType="com.fnd.psi.dto.vo.WarehouseUserRelationInfoDTO">
+
+        SELECT
+            *
+        FROM
+            t_warehouse_user_relation t1
+                LEFT JOIN t_warehouse_info t2 ON t1.warehouse_id = t2.id
+        WHERE
+         t1.is_deleted = 0
+        AND t2.is_deleted = 0
+        <if test="userIds != null and userIds.size() >0">
+            and t1.user_id in
+            <foreach collection="userIds" index="index" item="userId" open="(" separator="," close=")">
+                #{userId}
+            </foreach>
+        </if>
+    </select>
+</mapper>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fnd.psi.mapper.WarehouseInfoMapper">
+
+    <resultMap id="WarehouseInfo" type="com.fnd.psi.model.WarehouseInfo">
+        <result column="id" property="id"/>
+        <result column="warehouse_code" property="warehouseCode"/>
+        <result column="warehouse_name" property="warehouseName"/>
+        <result column="warehouse_contact" property="warehouseContact"/>
+        <result column="warehouse_phone" property="warehousePhone"/>
+        <result column="warehouse_email" property="warehouseEmail"/>
+        <result column="warehouse_type" property="warehouseType"/>
+        <result column="warehouse_status" property="warehouseStatus"/>
+        <result column="warehouse_area" property="warehouseArea"/>
+        <result column="warehouse_address" property="warehouseAddress"/>
+        <result column="warehouse_acreage" property="warehouseAcreage"/>
+        <result column="shipping_region" property="shippingRegion"/>
+        <result column="inventory_priority" property="inventoryPriority"/>
+        <result column="country_id" property="countryId"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="is_default" property="isDefault"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        `id`,
+        `warehouse_code`,
+        `warehouse_name`,
+        `warehouse_contact`,
+        `warehouse_phone`,
+        `warehouse_email`,
+        `warehouse_type`,
+        `warehouse_status`,
+        `warehouse_area`,
+        `warehouse_address`,
+        `warehouse_acreage`,
+        `shipping_region`,
+        `inventory_priority`,
+        `country_id`,
+        `create_by`,
+        `update_by`,
+        `is_default`,
+        `is_deleted`,
+        `gmt_create`,
+        `gmt_modified`
+    </sql>
+
+    <select id="selectWarehouseInfoPage" resultType="com.fnd.psi.model.WarehouseInfo">
+        select  * from t_warehouse_info w join
+        (
+            select distinct warehouse_id warehouse_id from t_warehouse_user_relation
+            <where>
+                <if test="userId!=null">
+                    and user_id = #{userId}
+                </if>
+                and is_deleted = 0
+            </where>
+        ) r
+         on w.id = r.warehouse_id
+        where w.is_deleted = 0
+        <if test="countryId!=null">
+            and w.country_id = #{countryId}
+        </if>
+        <if test="ew!=null and ew.keyword!=null and ew.keyword!='' ">
+            and (w.warehouse_code like CONCAT('%', #{ew.keyword} ,'%') or
+                 w.warehouse_name like CONCAT('%', #{ew.keyword} ,'%'))
+        </if>
+        order by w.gmt_create desc
+    </select>
+
+    <select id="selectWarehouseByAreaAndUserId"  resultType="com.fnd.psi.model.WarehouseInfo">
+        SELECT
+        w.`id`,
+        w.`warehouse_code`,
+        w.`warehouse_name`,
+        w.`warehouse_contact`,
+        w.`warehouse_phone`,
+        w.`warehouse_email`,
+        w.`warehouse_type`,
+        w.`warehouse_status`,
+        w.`warehouse_area`,
+        w.`warehouse_address`,
+        w.`warehouse_acreage`,
+        w.`shipping_region`,
+        w.`inventory_priority`,
+        w.`country_id`,
+        w.`create_by`,
+        w.`update_by`,
+        w.`is_default`,
+        w.`is_deleted`,
+        w.`gmt_create`,
+        w.`gmt_modified`
+        FROM t_warehouse_info w
+            LEFT JOIN t_warehouse_shipping_region_relation ws ON w.id = ws.warehouse_id
+        WHERE
+        1 = 1
+        <if test="areaId!=null and areaId!='' ">
+            AND ws.area_id = #{areaId}
+        </if>
+        <if test="userId!=null and userId!='' ">
+            AND w.belong_user_id = #{userId}
+        </if>
+        AND ws.is_deleted = 0
+        AND w.is_deleted = 0
+        ORDER BY w.inventory_priority,w.gmt_create ASC
+    </select>
+
+
+    <select id="selectWarehouseInfoByWarehouseList" resultType="com.fnd.psi.dto.vo.WarehouseRelationUserInfoDTO">
+        select
+            w.id as warehouse_id,
+            w.warehouse_name,
+            w.belong_user_id,
+            u.user_name,
+            u.nick_name
+        from t_warehouse_info w
+        join t_psi_user u
+        on w.belong_user_id = u.id
+        <where>
+            w.id in
+            <foreach collection="list" open="(" separator="," close=")" item="item">
+                #{item}
+            </foreach>
+            and w.is_deleted = 0 and u.is_deleted = 0
+        </where>
+
+    </select>
+</mapper>

@@ -7,27 +7,23 @@ import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapp
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fnd.psi.constant.ErrorCodeConstants;
+import com.fnd.psi.constant.GlobalErrorCodeConstants;
+import com.fnd.psi.constant.UserSourceTypeEnum;
 import com.fnd.psi.constant.UserStatusEnum;
 import com.fnd.psi.dto.PageDTO;
+import com.fnd.psi.dto.ResultVo;
 import com.fnd.psi.dto.user.PsiUserDTO;
 import com.fnd.psi.dto.user.PsiUserInfoDTO;
 import com.fnd.psi.dto.user.UserLoginDTO;
-import com.fnd.psi.dto.ResultVo;
-import com.fnd.psi.dto.vo.PsiUserListVO;
-import com.fnd.psi.dto.vo.PsiUserRoleVO;
-import com.fnd.psi.dto.vo.UserListDTO;
-import com.fnd.psi.dto.vo.WarehouseUserRelationInfoDTO;
+import com.fnd.psi.dto.vo.*;
 import com.fnd.psi.exception.XXException;
 import com.fnd.psi.mapper.UserMapper;
 import com.fnd.psi.model.PsiInWarehouseUserRelation;
 import com.fnd.psi.model.PsiOutWarehouseUserRelation;
 import com.fnd.psi.model.PsiUser;
 import com.fnd.psi.security.FndSecurityContextUtil;
-import com.fnd.psi.service.UserService;
-import com.fnd.psi.utils.CopyBeanUtils;
-import com.fnd.psi.utils.ResultUtils;
-import com.fnd.psi.utils.ResultVoUtil;
-import com.fnd.psi.utils.TokenUtil;
+import com.fnd.psi.service.*;
+import com.fnd.psi.utils.*;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.AllArgsConstructor;
@@ -36,6 +32,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -57,6 +54,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, PsiUser> implements
     PasswordEncoder passwordEncoder;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private WarehouseUserRelationService warehouseUserRelationService;
+    @Autowired
+    private PsiOutWarehouseUserRelationService psiOutWarehouseUserRelationService;
+    @Autowired
+    private PsiInWarehouseUserRelationService psiInWarehouseUserRelationService;
+    @Autowired
+    Encryption encode;
+    @Autowired
+    private UserRoleService userRoleService;
 
     @Override
     public List<PsiUser> queryUserList() {
@@ -202,6 +209,157 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, PsiUser> implements
         }
         recordVOIPage.setRecords(psiUserListVOPage);
         return ResultVoUtil.success(recordVOIPage);
+    }
+
+
+    @Override
+    public ResultVo updateUserFrozen(UserDTO userDTO) {
+        final Date date = new Date();
+        final PsiUserInfoDTO currentUser = FndSecurityContextUtil.getContext().getPsiUserInfoDTO();
+        final PsiUser selectPsiUser = getById(userDTO.getId());
+        if (!currentUser.getUser().getBelongUserId().equals(selectPsiUser.getBelongUserId())){
+            throw new XXException(GlobalErrorCodeConstants.USER_HAS_NO_PERMISSION);
+        }
+        if (selectPsiUser.getLevel()==0 && userDTO.getIsFrozen().equals(UserStatusEnum.DEFAULT.getCode())){
+            throw new XXException(ErrorCodeConstants.ADMINISTRATORS_CANNOT_BE_FROZEN);
+        }
+        PsiUser user = new PsiUser();
+        user.setId(userDTO.getId());
+        user.setUserStatus(userDTO.getIsFrozen());
+        user.setGmtModified(date);
+        updateById(user);
+        return ResultVoUtil.success();
+    }
+
+    @Override
+    @Transactional
+    public ResultVo addUser(UserDTO userDTO) {
+        final Date date = new Date();
+        final PsiUserDTO userLogin = FndSecurityContextUtil.getContext().getPsiUserInfoDTO().getUser();
+        final List<PsiUser> queryPsiUser = list(new LambdaQueryWrapper<PsiUser>().
+                eq(PsiUser::getUserName, userDTO.getUserName()).
+                eq(PsiUser::getIsDeleted, false));
+        if (!CollectionUtils.isEmpty(queryPsiUser)){
+            throw new XXException(ErrorCodeConstants.USER_ALREADY_EXISTS);
+        }
+        PsiUser addPsiUser = new PsiUser();//待新增用户
+        BeanUtils.copyProperties(userDTO,addPsiUser);
+        Long belongUserId = userLogin.getBelongUserId();
+        addPsiUser.setBelongUserId(belongUserId);
+        addPsiUser.setGmtCreate(date);
+        addPsiUser.setUserStatus(userDTO.getIsFrozen());
+        addPsiUser.setLevel(1);
+        addPsiUser.setCountryId(userLogin.getCountryId());
+        addPsiUser.setCountryCode(userLogin.getCountryCode());
+        addPsiUser.setUserType(userLogin.getUserType());
+        addPsiUser.setIsDeleted(false);
+        addPsiUser.setPassword(encode.encode(userDTO.getPassword()));
+        addPsiUser.setCreateUserId(userLogin.getId());
+        addPsiUser.setSourceType(UserSourceTypeEnum.DEFAULT.getCode());
+        addPsiUser.setGmtModified(date);
+        save(addPsiUser);
+        userRoleRelation(addPsiUser.getId(),userDTO.getRoles());
+        userWarehouseRelation(addPsiUser.getId(),userDTO.getWarehouseIds());
+        userOutWarehouseRelation(addPsiUser.getId(),userDTO.getOutWarehouseIds());
+        userInWarehouseRelation(addPsiUser.getId(),userDTO.getInWarehouseIds());
+        return ResultVoUtil.success();
+    }
+
+    /**
+     * 用户绑角色
+     * @param userId
+     * @param roles
+     */
+    public void userRoleRelation(Long userId,List<Long> roles){
+        if (CollectionUtils.isEmpty(roles)){
+            roles = Lists.newArrayList();
+        }
+        userRoleService.userRoleRelation(userId,roles);
+    }
+
+    public void userWarehouseRelation(Long userId,List<Long> warehouseIds){
+        //绑定仓库
+        if (CollectionUtils.isEmpty(warehouseIds)){
+            warehouseIds = Lists.newArrayList();
+        }
+        warehouseUserRelationService.userWarehouseRelation(userId,warehouseIds);
+    }
+
+    private void userOutWarehouseRelation(Long userId, List<Long> outWarehouseIds) {
+        //绑定仓库
+        if (CollectionUtils.isEmpty(outWarehouseIds)){
+            outWarehouseIds = Lists.newArrayList();
+        }
+        psiOutWarehouseUserRelationService.addPsiOutWarehouseUserRelationAndDeleteOld(userId,outWarehouseIds);
+    }
+
+    private void userInWarehouseRelation(Long userId, List<Long> inWarehouseIds) {
+        //绑定仓库
+        if (CollectionUtils.isEmpty(inWarehouseIds)){
+            inWarehouseIds = Lists.newArrayList();
+        }
+        psiInWarehouseUserRelationService.addPsiInWarehouseUserRelationAndDeleteOld(userId,inWarehouseIds);
+    }
+
+    @Override
+    public ResultVo updateUser(UserDTO userDTO) {
+        if (Objects.isNull(userDTO.getId())){
+            throw new XXException(GlobalErrorCodeConstants.INVALID_PARAMETER);
+        }
+        final Date date = new Date();
+        final PsiUserDTO userLogin = FndSecurityContextUtil.getContext().getPsiUserInfoDTO().getUser();
+        final List<PsiUser> queryPsiUser = list(new LambdaQueryWrapper<PsiUser>().
+                eq(PsiUser::getUserName, userDTO.getUserName()).
+                notIn(PsiUser::getId,userDTO.getId()).
+                eq(PsiUser::getIsDeleted, false));
+
+        if (!CollectionUtils.isEmpty(queryPsiUser)){
+            throw new XXException(ErrorCodeConstants.USER_ALREADY_EXISTS);
+        }
+        PsiUser getPsiUser = getById(userDTO.getId());
+        if (!userLogin.getBelongUserId().equals(getPsiUser.getBelongUserId())){
+            throw new XXException(GlobalErrorCodeConstants.USER_HAS_NO_PERMISSION);
+        }
+        if (getPsiUser.getLevel()==0 &&userDTO.getIsFrozen()==UserStatusEnum.DEFAULT.getCode()){
+            throw new XXException(ErrorCodeConstants.ADMINISTRATORS_CANNOT_BE_FROZEN);
+        }
+        PsiUser addPsiUser = new PsiUser();
+        addPsiUser.setId(getPsiUser.getId());
+        addPsiUser.setNickName(userDTO.getNickName());
+        addPsiUser.setPhone(userDTO.getPhone());
+        addPsiUser.setUserStatus(userDTO.getIsFrozen());
+        addPsiUser.setGmtModified(date);
+        updateById(addPsiUser);
+        userRoleRelation(addPsiUser.getId(),userDTO.getRoles());
+        userWarehouseRelation(addPsiUser.getId(),userDTO.getWarehouseIds());
+        userOutWarehouseRelation(addPsiUser.getId(),userDTO.getOutWarehouseIds());
+        userInWarehouseRelation(addPsiUser.getId(),userDTO.getInWarehouseIds());
+        return ResultVoUtil.success();
+    }
+
+
+    @Override
+    public ResultVo updatePassword(UserUpdatePasswordDTO userDTO) {
+        final Date date = new Date();
+        if (Objects.isNull(userDTO)||Objects.isNull(userDTO.getUserId())){
+            throw new XXException(GlobalErrorCodeConstants.INVALID_PARAMETER);
+        }
+        if (Objects.isNull(userDTO.getPassword())||Objects.isNull(userDTO.getConfirmPassword())){
+            throw new XXException(ErrorCodeConstants.INCORRECT_PASSWORD_INPUT);
+        }
+        if (!userDTO.getPassword().equals(userDTO.getConfirmPassword())){
+            throw new XXException(ErrorCodeConstants.INCONSISTENT_PASSWORD_INPUT);
+        }
+        final PsiUser psiUser = getById(userDTO.getUserId());
+        if (Objects.isNull(psiUser)){
+            throw new XXException(ErrorCodeConstants.USER_DOESN);
+        }
+        PsiUser updatePsiUser = new PsiUser();
+        updatePsiUser.setId(userDTO.getUserId());
+        updatePsiUser.setPassword(encode.encode(userDTO.getPassword()));
+        updatePsiUser.setGmtModified(date);
+        updateById(updatePsiUser);
+        return ResultVoUtil.success();
     }
 
 

@@ -4,11 +4,13 @@ package com.fnd.psi.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fnd.psi.dto.PageDTO;
+import com.fnd.psi.dto.ResultVo;
 import com.fnd.psi.dto.user.PsiUserInfoDTO;
 import com.fnd.psi.dto.user.UserLoginDTO;
-import com.fnd.psi.dto.ResultVo;
 import com.fnd.psi.dto.vo.PsiUserListVO;
+import com.fnd.psi.dto.vo.UserDTO;
 import com.fnd.psi.dto.vo.UserListDTO;
+import com.fnd.psi.dto.vo.UserUpdatePasswordDTO;
 import com.fnd.psi.model.PsiUser;
 
 import java.util.List;
@@ -45,4 +47,30 @@ public interface UserService extends IService<PsiUser> {
      * @return
      */
     ResultVo<IPage<PsiUserListVO>> userList(UserListDTO userListDTO);
+
+    /**
+     * 冻结解冻
+     * @param userDTO
+     * @return
+     */
+    ResultVo updateUserFrozen(UserDTO userDTO);
+
+    /**
+     * 添加员工
+     * @param userDTO
+     * @return
+     */
+    ResultVo addUser(UserDTO userDTO);
+
+    /**
+     * 修改员工
+     */
+    ResultVo updateUser(UserDTO userDTO);
+
+    /**
+     * 修改密码
+     * @param userDTO
+     * @return
+     */
+    ResultVo updatePassword(UserUpdatePasswordDTO userDTO);
 }

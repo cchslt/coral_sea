@@ -34,4 +34,45 @@ public interface ErrorCodeConstants {
      * 账号被冻结
      */
     String ACCOUNT_IS_FROZEN = "1610000008";
+
+
+    /**
+     * 管理员不能被冻结
+     */
+    String ADMINISTRATORS_CANNOT_BE_FROZEN = "1610000010";
+
+    /**
+     * 用户已经存在
+     */
+    String USER_ALREADY_EXISTS = "1610000005";
+
+    /**
+     *  修改密码输入密码有误
+     */
+    String INCORRECT_PASSWORD_INPUT = "1610000006";
+
+    /**
+     *  输入密码不一致
+     */
+    String INCONSISTENT_PASSWORD_INPUT = "1610000007";
+
+
+
+
+    /**
+     * 分页参数不能为空
+     */
+    String PAGE_PARAMETER_CAN_NOT_BE_NULL = "1602000001";
+    /**
+     * 仓库名不能为空
+     */
+    String WAREHOUSE_NAME_CAN_NOT_BE_NULL = "1602000002";
+
+    /**
+     * 未查询到仓库信息
+     */
+    String NO_WAREHOUSE_INFORMATION_FOUND= "1602000003";
+
+    //仓库发货区域不能为空
+    String WAREHOUSE_SHOPPING_REGION_CAN_NOT_BE_EMPTY= "1602000004";
 }

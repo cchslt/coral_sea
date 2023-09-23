@@ -2,6 +2,10 @@ package com.fnd.psi.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fnd.psi.dto.ResultVo;
+import com.fnd.psi.dto.user.PsiUserInfoDTO;
+import com.fnd.psi.dto.vo.PermissionDTO;
+import com.fnd.psi.dto.vo.PermissionVO;
+import com.fnd.psi.model.PsiPermission;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -50,12 +54,6 @@ public interface PermissionService extends IService<PsiPermission> {
      *  获取角色权限
      * @return
      */
-    HashMap<String, List<PermissionDTO>> getRolePermissionByRoles(List<Long> roleIds,  PsiUserInfoDTO psiUserInfoDTO);
+    HashMap<String, List<PermissionDTO>> getRolePermissionByRoles(List<Long> roleIds, PsiUserInfoDTO psiUserInfoDTO);
 
-    /**
-     * 过滤菜单
-     * @param listResultVoData
-     * @return
-     */
-    List<PermissionDTO> getPermissionDTO(List<PermissionDTO> listResultVoData, PsiUserInfoDTO psiUserInfoDTO);
 }
