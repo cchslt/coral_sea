@@ -45,6 +45,11 @@ public class PsiStorageOrderDTO extends BaseDTO {
      */
     @ApiModelProperty("商品数量")
     private Integer productCount;
+
+    private Long productSkuId;
+
+
+    private String productSkuCode;
     /**
      * 入库数量
      */

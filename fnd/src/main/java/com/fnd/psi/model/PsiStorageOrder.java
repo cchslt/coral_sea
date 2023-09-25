@@ -64,6 +64,15 @@ public class PsiStorageOrder implements Serializable {
      */
     private Long warehouseId;
 
+    /**
+     * 商品sku
+     */
+    private Long productSkuId;
+
+    /**
+     * 商品code
+     */
+    private String productSkuCode;
 
     /**
      *  商品数量

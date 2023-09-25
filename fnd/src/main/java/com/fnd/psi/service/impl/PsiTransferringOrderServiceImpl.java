@@ -112,6 +112,8 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
         psiStorageOrderDTO.setSourceId(psiTransferringOrder.getId());
         psiStorageOrderDTO.setSourceCode(psiTransferringOrder.getTransferCode());
         psiStorageOrderDTO.setSourceBusinessTime(psiTransferringOrder.getGmtModified());
+        psiStorageOrderDTO.setProductSkuId(psiTransferringOrder.getProductSkuId());
+        psiStorageOrderDTO.setProductSkuCode(psiTransferringOrder.getProductSkuCode());
         psiStorageOrderDTO.setProductCount(psiTransferringOrderUpdateDTO.getProductCount());
         psiStorageOrderDTO.setReceivedCount(psiTransferringOrderUpdateDTO.getProductCount());
         psiStorageOrderDTO.setStorageStatus(StorageStatusEnum.ALL_WAREHOUSING.getCode());

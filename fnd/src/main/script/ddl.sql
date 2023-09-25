@@ -292,10 +292,12 @@ CREATE TABLE `t_psi_storage_order` (
   `source_code` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '来源单号',
   `source_business_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '来源业务单据时间',
   `warehouse_id` bigint NOT NULL COMMENT '所在仓库id',
+  `product_sku_id` bigint DEFAULT NULL COMMENT '商品skuid',
+  `product_sku_code` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '商品skucode',
   `product_count` int DEFAULT NULL COMMENT ' 商品数量',
   `received_count` int DEFAULT NULL COMMENT '入库数量',
   `storage_status` tinyint DEFAULT '1' COMMENT '入库状态,1未入库、2部分入库、3全部入库、0已经关闭',
-   `belong_user_id` bigint NOT NULL COMMENT '所属PSI用户id',
+  `belong_user_id` bigint NOT NULL COMMENT '所属PSI用户id',
   `remarks` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '单据备注',
   `create_by` bigint DEFAULT '0' COMMENT '创建人',
   `update_by` bigint DEFAULT '0' COMMENT '最后修改人',
@@ -304,7 +306,7 @@ CREATE TABLE `t_psi_storage_order` (
   `gmt_modified` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `index_warehouse_id` (`warehouse_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC COMMENT='入库单主信息';
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC COMMENT='入库单主信息';
 
 -- ----------------------------
 -- Table structure for t_psi_transferring_order
