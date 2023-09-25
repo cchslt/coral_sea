@@ -54,35 +54,22 @@ CREATE TABLE `t_psi_in_warehouse_user_relation` (
 DROP TABLE IF EXISTS `t_psi_inventory`;
 CREATE TABLE `t_psi_inventory` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '自增主键',
-  `product_spu_id` bigint(20) DEFAULT NULL COMMENT '库存归属spu id',
   `product_sku_id` bigint(20) NOT NULL COMMENT '库存归属 sku id',
-  `product_spu_code` varchar(64) DEFAULT NULL COMMENT '冗余 spu编码',
   `product_sku_code` varchar(64) NOT NULL COMMENT '冗余 sku编码',
   `warehouse_id` bigint(20) NOT NULL COMMENT '库存所属 仓库id',
-  `inventory_type` tinyint(4) NOT NULL DEFAULT '1' COMMENT '库存类型:1:强管控,2:允许以采代销',
-  `sellable_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '冗余计算:可售库存(可用库存 - 占用库存) ',
+  `sellable_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '可售库存(可用库存 - 占用库存) ',
   `available_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '可用库存',
-  `inbound_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '待入库库存',
-  `stocked_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '已上架库存',
-  `un_stocked_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '未上架库存',
-  `outbound_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '待出库库存',
   `in_transit_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '在途库存',
-  `defective_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '不良品库存',
   `occupied_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '占用库存',
-  `virtual_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '虚拟库存',
-  `weighted_cost_price` decimal(22,2) DEFAULT NULL COMMENT '冗余 加权平均价',
   `is_deleted` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否删除0:未删除,1删除',
   `create_by` bigint(20) DEFAULT '0' COMMENT '创建人',
   `update_by` bigint(20) DEFAULT '0' COMMENT '最后修改人',
   `gmt_create` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `gmt_modified` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
-  KEY `index_product_spu_id` (`product_spu_id`) USING BTREE,
-  KEY `index_product_sku_id` (`product_sku_id`) USING BTREE,
-  KEY `index_sellable_quantity` (`sellable_quantity`) USING BTREE,
-  KEY `index_available_quantity` (`available_quantity`) USING BTREE,
-  KEY `index_occupied_quantity` (`occupied_quantity`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=13796 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='psi库存主表';
+  KEY `index_product_sku_id` (`product_sku_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='库存主表';
+
 
 -- ----------------------------
 -- Table structure for t_psi_order_relation
@@ -382,92 +369,30 @@ CREATE TABLE `t_psi_storage_order_detail` (
 -- ----------------------------
 DROP TABLE IF EXISTS `t_psi_transferring_order`;
 CREATE TABLE `t_psi_transferring_order` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `transferring_order_code` varchar(128) NOT NULL COMMENT '出库单单号',
-  `source_type` tinyint(4) DEFAULT '0' COMMENT '来源：0->psi自动创建；1:OMS下发',
-  `transferring_type` tinyint(4) DEFAULT '0' COMMENT '调拨单据类型：0、PSI内部调拨 1、PSI-唯智 调拨  2、PSI-易仓调拨 ',
-  `transferring_method` tinyint(4) NOT NULL DEFAULT '1' COMMENT '调拨方式 1: 分步调拨 2：直接调拨',
-  `business_type` tinyint(4) DEFAULT '0' COMMENT '调拨业务类型：1 移库手动调拨 2卸货异常调拨',
-  `source_transferring_id` bigint(20) DEFAULT NULL COMMENT '来源调拨单Id  用于记录自动生成的调拨单关联',
-  `source_transferring_code` varchar(128) DEFAULT NULL COMMENT '来源调拨单号 用于记录自动生成的调拨单关联',
-  `source_warehouse_id` bigint(20) NOT NULL COMMENT '调拨源仓库id',
-  `target_warehouse_id` bigint(20) NOT NULL COMMENT '调拨目标仓库id',
-  `relation_storage_order_code` varchar(128) DEFAULT NULL COMMENT '冗余 关联入库单单号',
-  `relation_outbound_order_code` varchar(128) DEFAULT NULL COMMENT '冗余 关联出库单单号',
-  `belong_user_id` bigint(20) NOT NULL COMMENT '所属PSI用户id',
-  `supplier_id` bigint(20) DEFAULT NULL COMMENT 'psi供应商id',
-  `source_supplier_id` bigint(20) DEFAULT NULL COMMENT '冗余 来源供应商id eg：egatee seller_id',
-  `product_count` int(11) DEFAULT NULL COMMENT ' 商品数量',
-  `received_outbound_count` int(11) DEFAULT NULL COMMENT '已出库数量',
-  `not_yet_outbound_count` int(11) DEFAULT NULL COMMENT '未出库数量',
-  `on_passage_count` int(11) DEFAULT NULL COMMENT '在途数量',
-  `received_storage_count` int(11) DEFAULT NULL COMMENT '已入库数量',
-  `not_yet_storage_count` int(11) DEFAULT NULL COMMENT '未入库数量',
-  `transferring_status` tinyint(4) DEFAULT '1' COMMENT '调拨单状态,0关闭 1未出库、2部分出库、3全部出库、11 已入库、12部分入库、13全部入库 ',
-  `relation_storage_status` tinyint(4) DEFAULT '1' COMMENT '入库状态,1未入库、2部分入库、3全部入库、0已经关闭 ',
-  `relation_outbound_status` tinyint(4) DEFAULT '1' COMMENT '调拨单状态,0关闭 1未出库、2部分出库、3全部出库',
-  `settlement_account_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '预留 结算账户id',
-  `order_remarks` varchar(1000) DEFAULT NULL COMMENT '调拨单据备注',
-  `country_id` bigint(20) DEFAULT '0' COMMENT '国家Id',
-  `country_code` varchar(16) DEFAULT '' COMMENT '国家code',
-  `transferring_finish_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '出库完成时间',
-  `create_by` bigint(20) DEFAULT '0' COMMENT '创建人',
-  `update_by` bigint(20) DEFAULT '0' COMMENT '最后修改人',
-  `order_time` datetime DEFAULT NULL,
-  `is_deleted` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否删除0:未删除,1删除',
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `source_warehouse_id` bigint NOT NULL COMMENT '调拨源仓库id',
+  `product_sku_id` bigint NOT NULL COMMENT 'skuid ',
+  `product_sku_code` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'sku编码',
+  `product_sku_name` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '冗余 商品名称',
+  `product_count` int DEFAULT NULL COMMENT ' 商品数量',
+  `received_storage_count` int DEFAULT NULL COMMENT '已入库数量',
+  `not_yet_storage_count` int DEFAULT NULL COMMENT '未入库数量',
+  `transferring_status` tinyint DEFAULT '1' COMMENT '调拨单状态',
+  `relation_storage_status` tinyint DEFAULT '1' COMMENT '入库状态,1未入库、2部分入库、3全部入库、0已经关闭 ',
+  `add_type` tinyint NOT NULL DEFAULT '0' COMMENT '数据类型：1:调拨, 2: 销售',
+  `belong_user_id` bigint NOT NULL COMMENT '所属PSI用户id',
+  `remarks` varchar(2048) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '备注',
+  `create_by` bigint DEFAULT '0' COMMENT '创建人',
+  `update_by` bigint DEFAULT '0' COMMENT '最后修改人',
+  `is_deleted` tinyint NOT NULL DEFAULT '0' COMMENT '是否删除0:未删除,1删除',
   `gmt_create` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `gmt_modified` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
-  KEY `index_transferring_order_code` (`transferring_order_code`) USING BTREE,
-  KEY `index_source_transferring_code` (`source_transferring_code`) USING BTREE,
-  KEY `index_relation_storage_order_code` (`relation_storage_order_code`) USING BTREE,
-  KEY `index_relation_outbound_order_code` (`relation_outbound_order_code`) USING BTREE,
-  KEY `index_source_warehouse_id` (`source_warehouse_id`) USING BTREE,
-  KEY `index_target_warehouse_id` (`target_warehouse_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=182 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='调拨单主信息';
-
--- ----------------------------
--- Table structure for t_psi_transferring_order_detail
--- ----------------------------
-DROP TABLE IF EXISTS `t_psi_transferring_order_detail`;
-CREATE TABLE `t_psi_transferring_order_detail` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `transferring_order_id` bigint(20) NOT NULL COMMENT '关联调拨单主键',
-  `transferring_order_code` varchar(128) NOT NULL COMMENT '关联调拨单单号',
-  `source_warehouse_id` bigint(20) NOT NULL COMMENT '冗余 调拨源仓库id',
-  `target_warehouse_id` bigint(20) NOT NULL COMMENT '冗余 调拨目标仓库id',
-  `belong_user_id` bigint(20) NOT NULL COMMENT '所属PSI用户id',
-  `source_sku_id` bigint(20) DEFAULT NULL COMMENT '冗余 来源skuid ',
-  `product_sku_id` bigint(20) NOT NULL COMMENT 'skuid ',
-  `product_sku_code` varchar(128) NOT NULL COMMENT 'sku编码',
-  `product_sku_name` varchar(512) DEFAULT NULL COMMENT '冗余 商品名称',
-  `product_attribute` varchar(128) DEFAULT NULL COMMENT '冗余 商品销售属性',
-  `product_sku_price` decimal(22,2) DEFAULT NULL COMMENT '商品 销售单价',
-  `product_amount` decimal(22,2) DEFAULT NULL COMMENT '商品总价= 单价*数量',
-  `product_sale_unit` varchar(255) DEFAULT '' COMMENT '销售单位(多项)',
-  `product_count` int(11) DEFAULT NULL COMMENT ' 商品数量',
-  `received_outbound_count` int(11) DEFAULT NULL COMMENT '已出库数量',
-  `not_yet_outbound_count` int(11) DEFAULT NULL COMMENT '未出库数量',
-  `on_passage_count` int(11) DEFAULT NULL COMMENT '在途数量',
-  `received_storage_count` int(11) DEFAULT NULL COMMENT '已入库数量',
-  `not_yet_storage_count` int(11) DEFAULT NULL COMMENT '未入库数量',
-  `add_type` tinyint(4) NOT NULL DEFAULT '0' COMMENT '数据录入来源：1->扫码录入,2 手动录入,3:导入',
-  `country_id` bigint(20) DEFAULT '0' COMMENT '国家Id',
-  `country_code` varchar(16) DEFAULT '' COMMENT '国家code',
-  `create_by` bigint(20) DEFAULT '0' COMMENT '创建人',
-  `update_by` bigint(20) DEFAULT '0' COMMENT '最后修改人',
-  `is_deleted` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否删除0:未删除,1删除',
-  `gmt_create` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `gmt_modified` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `index_transferring_order_id` (`transferring_order_id`) USING BTREE,
-  KEY `index_transferring_order_code` (`transferring_order_code`) USING BTREE,
   KEY `index_product_sku_id` (`product_sku_id`) USING BTREE,
   KEY `index_product_sku_code` (`product_sku_code`) USING BTREE,
   KEY `index_source_warehouse_id` (`source_warehouse_id`) USING BTREE,
   KEY `index_target_warehouse_id` (`target_warehouse_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=225697 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='调拨单详情信息';
-
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='调拨单信息';
 -- ----------------------------
 -- Table structure for t_psi_user
 -- ----------------------------
