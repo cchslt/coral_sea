@@ -3,17 +3,23 @@ package com.fnd.psi.service.impl;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fnd.psi.constant.ErrorCodeConstants;
+import com.fnd.psi.dto.PageDTO;
 import com.fnd.psi.dto.ResultVo;
 import com.fnd.psi.dto.product.PsiProductSkuDTO;
 import com.fnd.psi.dto.vo.PsiProductSkuVO;
 import com.fnd.psi.exception.XXException;
 import com.fnd.psi.mapper.PsiProductSkuMapper;
 import com.fnd.psi.model.PsiProductSku;
+import com.fnd.psi.model.PsiUser;
 import com.fnd.psi.security.FndSecurityContextUtil;
 import com.fnd.psi.service.PsiProductSkuService;
 import com.fnd.psi.utils.CopyBeanUtils;
+import com.fnd.psi.utils.PSIBaseUtils;
+import com.fnd.psi.utils.ResultUtils;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,8 +34,10 @@ import java.util.List;
  */
 @Slf4j
 @Service("psiProductSkuService")
+@AllArgsConstructor
 public class PsiProductSkuServiceImpl extends ServiceImpl<PsiProductSkuMapper, PsiProductSku> implements PsiProductSkuService {
 
+    private ResultUtils resultUtils;
 
     @Override
     @Transactional(rollbackFor = Throwable.class)
@@ -88,6 +96,23 @@ public class PsiProductSkuServiceImpl extends ServiceImpl<PsiProductSkuMapper, P
         lambdaQueryWrapper.orderByDesc(PsiProductSku::getGmtCreate);
 
         return CopyBeanUtils.copyList(baseMapper.selectList(lambdaQueryWrapper), PsiProductSkuDTO.class);
+    }
+
+    @Override
+    public PageDTO<PsiProductSkuDTO> listPage(PsiProductSkuVO productSkuVO) {
+        Page<PsiProductSku> page = PSIBaseUtils.buildPageByQuery(productSkuVO);
+
+        LambdaQueryWrapper<PsiProductSku> queryWrapper = new LambdaQueryWrapper();
+        queryWrapper.like(StrUtil.isNotBlank(productSkuVO.getSkuCode()), PsiProductSku::getSkuCode, productSkuVO.getSkuCode());
+        queryWrapper.like(StrUtil.isNotBlank(productSkuVO.getSkuProductName()), PsiProductSku::getSkuProductName, productSkuVO.getSkuProductName());
+        queryWrapper.eq(PsiProductSku::getIsDeleted, 0);
+
+        Page<PsiProductSku> selectPage = baseMapper.selectPage(page, queryWrapper);
+
+        PageDTO<PsiProductSkuDTO> resultPage= CopyBeanUtils.convert(selectPage, PageDTO.class);
+        resultPage.setPages(selectPage.getPages());
+
+        return resultPage;
     }
 
 }

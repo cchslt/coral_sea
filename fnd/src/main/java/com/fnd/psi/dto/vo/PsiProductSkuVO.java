@@ -1,8 +1,8 @@
 package com.fnd.psi.dto.vo;
 
+import com.fnd.psi.dto.BasePageQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.hibernate.validator.constraints.NotBlank;
 
 
 /**
@@ -12,7 +12,7 @@ import org.hibernate.validator.constraints.NotBlank;
  * @See:
  */
 @Data
-public class PsiProductSkuVO {
+public class PsiProductSkuVO extends BasePageQuery {
 
     /**
      * sku编码
