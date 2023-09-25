@@ -1,6 +1,8 @@
 package com.fnd.psi.controller;
 
 import com.fnd.psi.dto.PsiTransferringOrderDTO;
+import com.fnd.psi.dto.PsiTransferringOrderUpdateDTO;
+import com.fnd.psi.dto.PsiTransferringOrderUpdateStatusDTO;
 import com.fnd.psi.dto.ResultVo;
 import com.fnd.psi.security.FndPreAuthorize;
 import com.fnd.psi.service.PsiTransferringOrderService;
@@ -39,5 +41,21 @@ public class PsiTransferringOrderController {
     }
 
 
+    /**
+     * 新增调拨单信息
+     */
+    @ApiOperation("调拨单信息-调拨")
+    @RequestMapping(value = "/transferring", method = RequestMethod.POST)
+    @FndPreAuthorize
+    public ResultVo<PsiTransferringOrderDTO> transferring(@RequestBody @Validated PsiTransferringOrderUpdateDTO psiTransferringOrderUpdateDTO){
+        return psiTransferringOrderService.transferring(psiTransferringOrderUpdateDTO);
+    }
 
+
+    @ApiOperation("调拨单信息-修改状态")
+    @RequestMapping(value = "/updateStatus", method = RequestMethod.POST)
+    @FndPreAuthorize
+    public ResultVo<PsiTransferringOrderDTO> updateStatus(@RequestBody @Validated PsiTransferringOrderUpdateStatusDTO psiTransferringOrderUpdateStatusDTO){
+        return psiTransferringOrderService.updateStatus(psiTransferringOrderUpdateStatusDTO);
+    }
 }

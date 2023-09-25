@@ -379,8 +379,8 @@ CREATE TABLE `t_psi_transferring_order` (
   `not_yet_storage_count` int DEFAULT NULL COMMENT '未入库数量',
   `transferring_status` tinyint DEFAULT '1' COMMENT '调拨单状态',
   `relation_storage_status` tinyint DEFAULT '1' COMMENT '入库状态,1未入库、2部分入库、3全部入库、0已经关闭 ',
-  `add_type` tinyint NOT NULL DEFAULT '0' COMMENT '数据类型：1:调拨, 2: 销售',
-  `belong_user_id` bigint NOT NULL COMMENT '所属PSI用户id',
+  `add_type` tinyint NOT NULL DEFAULT '1' COMMENT '数据类型：1:调拨, 2: 销售',
+  `belong_user_id` bigint NOT NULL COMMENT '所属用户id',
   `remarks` varchar(2048) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '备注',
   `create_by` bigint DEFAULT '0' COMMENT '创建人',
   `update_by` bigint DEFAULT '0' COMMENT '最后修改人',
@@ -390,9 +390,8 @@ CREATE TABLE `t_psi_transferring_order` (
   PRIMARY KEY (`id`) USING BTREE,
   KEY `index_product_sku_id` (`product_sku_id`) USING BTREE,
   KEY `index_product_sku_code` (`product_sku_code`) USING BTREE,
-  KEY `index_source_warehouse_id` (`source_warehouse_id`) USING BTREE,
-  KEY `index_target_warehouse_id` (`target_warehouse_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='调拨单信息';
+  KEY `index_source_warehouse_id` (`source_warehouse_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='调拨单信息';
 -- ----------------------------
 -- Table structure for t_psi_user
 -- ----------------------------

@@ -75,7 +75,7 @@ public class PsiTransferringOrderDTO  extends BaseDTO {
     /**
      * 数据类型：1:调拨， 2: 销售
      */
-    @ApiModelProperty("数据类型：1:调拨， 2: 销售")
+    @ApiModelProperty("数据类型：1:调拨入库， 2: 销售")
     private Integer addType;
     /**
      * 所属psi用户id
