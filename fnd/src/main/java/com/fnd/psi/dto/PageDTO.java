@@ -54,6 +54,6 @@ public class PageDTO<T> implements Serializable {
     private Long maxLimit;
 
     @ApiModelProperty("总页数")
-    private Integer pages;
+    private Long pages;
 
 }

@@ -247,38 +247,18 @@ CREATE TABLE `t_psi_permission` (
 -- ----------------------------
 DROP TABLE IF EXISTS `t_psi_product_sku`;
 CREATE TABLE `t_psi_product_sku` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'sku表id',
-  `source_type` tinyint(4) NOT NULL COMMENT '来源类型 1：egatee,2:手动创建',
-  `source_sku_id` bigint(20) DEFAULT NULL COMMENT '来源sku表id',
-  `source_sku_code` varchar(64) DEFAULT NULL COMMENT '来源sku编码',
-  `template_sku_id` bigint(20) DEFAULT '0' COMMENT '模板skuId',
-  `spu_id` bigint(20) NOT NULL COMMENT '所属商品id',
-  `sku_code` varchar(64) NOT NULL COMMENT 'sku编码',
-  `price` decimal(19,2) DEFAULT NULL COMMENT '商品价格',
-  `underline_price` decimal(19,2) DEFAULT NULL COMMENT '划线价格',
-  `purchase_price` decimal(19,2) DEFAULT NULL COMMENT '进货价',
-  `system_type` tinyint(4) NOT NULL DEFAULT '1' COMMENT '系统类型  ',
-  `gb_code` varchar(64) DEFAULT '' COMMENT '国标码',
-  `original_price` decimal(19,2) DEFAULT NULL COMMENT '市场价（建议零售价）',
-  `sku_publish_status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '上架状态：0->未上架；1->上架 2->下架',
-  `sku_images` varchar(1000) NOT NULL COMMENT '商品sku图片限制为5张，以逗号分割',
-  `sale_unit` varchar(255) NOT NULL DEFAULT '' COMMENT '销售单位(多项)',
-  `is_package` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否是组合商品。0-不是 1-是',
-  `is_serial_number` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否是串码管控商品。0-不是 1-是',
-  `country_id` bigint(20) DEFAULT '0' COMMENT '国家Id',
-  `country_code` varchar(16) DEFAULT '' COMMENT '国家code',
-  `low_stock` bigint(20) DEFAULT '0' COMMENT '库存预警值',
-  `is_deleted` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否删除0:未删除,1删除',
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'sku表id',
+  `sku_code` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'sku编码',
+  `sku_product_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'sku商品称',
+	 `create_user_id` bigint DEFAULT '0' COMMENT '创建userId',
+  `modify_user_id` bigint DEFAULT '0' COMMENT '修改userId',
+
+	`is_deleted` tinyint NOT NULL DEFAULT '0' COMMENT '是否删除0:未删除,1删除',
   `gmt_create` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `gmt_modified` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `sku_product_name` varchar(512) NOT NULL COMMENT 'sku商品称',
-  `attribute_value` varchar(200) DEFAULT NULL COMMENT '销售属性json形式存储{“”}',
-  `channel_price` decimal(19,2) DEFAULT NULL COMMENT '渠道价格',
   PRIMARY KEY (`id`) USING BTREE,
-  KEY `index_spu_id` (`spu_id`) USING BTREE,
-  KEY `index_source_sku_id` (`source_sku_id`) USING BTREE,
   KEY `index_sku_code` (`sku_code`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=15207 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='商品sku信息表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='商品sku信息表';
 
 -- ----------------------------
 -- Table structure for t_psi_role

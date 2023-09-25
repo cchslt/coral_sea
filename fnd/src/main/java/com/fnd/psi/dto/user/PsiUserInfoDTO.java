@@ -1,5 +1,7 @@
 package com.fnd.psi.dto.user;
 
+import com.fnd.psi.dto.vo.PermissionDTO;
+import com.fnd.psi.dto.vo.PsiUserRoleVO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -19,8 +21,8 @@ public class PsiUserInfoDTO implements Serializable {
     /**
      * 权限标识集合
      */
-//    @ApiModelProperty("权限标识集合")
-//    private List<PermissionDTO> menuData;
+    @ApiModelProperty("权限标识集合")
+    private List<PermissionDTO> menuData;
 
     
     @ApiModelProperty("按钮权限标识集合")
@@ -28,7 +30,7 @@ public class PsiUserInfoDTO implements Serializable {
     /**
      * 角色集合
      */
-//    @ApiModelProperty("角色集合")
-//    private List<PsiUserRoleVO> roles;
+    @ApiModelProperty("角色集合")
+    private List<PsiUserRoleVO> roles;
 
 }

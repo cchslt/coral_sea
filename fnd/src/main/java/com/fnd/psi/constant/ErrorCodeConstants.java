@@ -75,4 +75,13 @@ public interface ErrorCodeConstants {
 
     //仓库发货区域不能为空
     String WAREHOUSE_SHOPPING_REGION_CAN_NOT_BE_EMPTY= "1602000004";
+
+
+
+
+
+    String PRODUCT_CODE_IS_EXIT = "2000000001";
+    String PRODUCT_CODE_IS_NOT_EXIT = "2000000002";
+    String PRODUCT_CODE_IS_NOT_EQUAL = "2000000003";
+
 }

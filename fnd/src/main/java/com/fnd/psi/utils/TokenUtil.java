@@ -48,10 +48,16 @@ public class TokenUtil {
             Map<String, Object> header = new HashMap<>(2);
             header.put("Type", "Jwt");
             header.put("alg", "HS256");
+
+            PsiUserInfoDTO tokenInfo = CopyBeanUtils.convert(psiUserInfoDTO, PsiUserInfoDTO.class);
+            tokenInfo.setRoles(null);
+            tokenInfo.setPermissions(null);
+            tokenInfo.setMenuData(null);
+
             // 返回token字符串
             return JWT.create()
                     .withHeader(header)
-                    .withClaim("token", JSONUtil.toJsonStr(psiUserInfoDTO))
+                    .withClaim("token", JSONUtil.toJsonStr(tokenInfo))
                     .withExpiresAt(date)
                     .sign(algorithm);
         } catch (Exception e) {

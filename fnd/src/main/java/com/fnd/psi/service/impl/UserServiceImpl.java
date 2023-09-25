@@ -26,6 +26,7 @@ import com.fnd.psi.service.*;
 import com.fnd.psi.utils.*;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -55,6 +56,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, PsiUser> implements
     @Autowired
     private RoleService roleService;
     @Autowired
+    private PermissionService permissionService;
+    @Autowired
     private WarehouseUserRelationService warehouseUserRelationService;
     @Autowired
     private PsiOutWarehouseUserRelationService psiOutWarehouseUserRelationService;
@@ -78,12 +81,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, PsiUser> implements
     @Override
     public ResultVo<PageDTO<PsiUser>> pageUserList() {
 
-        IPage<PsiUser> page = new Page<>(1, 10);
+        Page<PsiUser> page = new Page<>(1, 10);
         LambdaQueryWrapper<PsiUser> queryWrapper = new LambdaQueryWrapper();
         queryWrapper.eq(PsiUser::getIsDeleted, 0);
-        IPage<PsiUser> selectPage = userMapper.selectPage(page, queryWrapper);
+        Page<PsiUser> selectPage = userMapper.selectPage(page, queryWrapper);
 
         PageDTO<PsiUser> resultPage= CopyBeanUtils.convert(selectPage, PageDTO.class);
+        resultPage.setPages(selectPage.getPages());
 
         return resultUtils.returnSuccess(resultPage);
     }
@@ -120,15 +124,33 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, PsiUser> implements
     }
 
     public PsiUserInfoDTO info(Long userId) {
+        List<PsiUserRoleVO> roles = Lists.newArrayList();
+        List<PermissionDTO> menuData = Lists.newArrayList();
+        List<String> permissions = Lists.newArrayList();
+        List<Long> roleIds = Lists.newArrayList();
+        PsiUser userLogin = null;
+        if (Objects.isNull(userId)){
+            userLogin  = CopyBeanUtils.convert(FndSecurityContextUtil.getContext().getPsiUserInfoDTO().getUser(),PsiUser.class);
+        }else {
+            userLogin =  getById(userId);
+        }
         PsiUserInfoDTO psiUserInfoDTO = new PsiUserInfoDTO();
+        psiUserInfoDTO.setUser(CopyBeanUtils.convert(userLogin,PsiUserDTO.class));
+        final List<PsiUserRoleVO> roleInfoByUserId = roleService.getRoleInfoByUserId(Sets.newHashSet(userLogin.getId()));
+        if (!CollectionUtils.isEmpty(roleInfoByUserId)){
+            roles = roleInfoByUserId;
+            roleIds = roleInfoByUserId.stream().map(PsiUserRoleVO::getId).collect(Collectors.toList());
+        }
+        if (!CollectionUtils.isEmpty(roleIds)){
+            final HashMap<String, List<PermissionDTO>> rolePermissionByRoles = permissionService.getRolePermissionByRoles(roleIds, psiUserInfoDTO);
+            menuData = rolePermissionByRoles.get("routes");
+            final List<PermissionDTO> permissionDTOS = rolePermissionByRoles.get("button");
+            permissions = permissionDTOS.stream().map(PermissionDTO::getPath).collect(Collectors.toList());
+        }
 
-        PsiUser psiUser = new LambdaQueryChainWrapper<>(userMapper)
-                .eq(PsiUser::getIsDeleted, 0)
-                .eq(PsiUser::getId, userId)
-                .one();
-
-        psiUserInfoDTO.setUser(CopyBeanUtils.convert(psiUser, PsiUserDTO.class));
-
+        psiUserInfoDTO.setRoles(roles);
+        psiUserInfoDTO.setMenuData(menuData);
+        psiUserInfoDTO.setPermissions(permissions);
         return psiUserInfoDTO;
     }
 
