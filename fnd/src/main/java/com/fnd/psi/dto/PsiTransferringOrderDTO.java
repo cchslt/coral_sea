@@ -17,6 +17,12 @@ import javax.validation.constraints.NotNull;
 public class PsiTransferringOrderDTO  extends BaseDTO {
 
     /**
+     * 调拨单编码
+     */
+    @ApiModelProperty("调拨单编码")
+    private String transferCode;
+
+    /**
      * 调拨源仓库id
      */
     @ApiModelProperty("调拨源仓库id")

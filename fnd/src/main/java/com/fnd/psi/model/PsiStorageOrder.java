@@ -10,13 +10,13 @@ import java.util.Date;
 
 /**
  * @Author: chenchaohai
- * @Date: 2023-09-25 15:42
+ * @Date: 2023-09-25 17:27
  * @Desc:
  * @See:
  */
-@TableName(value="t_psi_transferring_order")
+@TableName(value="t_psi_storage_order")
 @Data
-public class PsiTransferringOrder implements Serializable {
+public class PsiStorageOrder implements Serializable {
 
     /**
      * 主键 默认主键自增
@@ -29,45 +29,40 @@ public class PsiTransferringOrder implements Serializable {
      */
     private Long id;
 
-    /**
-     * 调拨单编码
-     */
-    private String transferCode;
-
 
     /**
-     *  调拨源仓库id
+     *  入库单单号
      *
      */
-    private Long sourceWarehouseId;
-
-
-//    /**
-//     *  调拨目标仓库id
-//     *
-//     */
-//    private Long targetWarehouseId;
+    private String storageOrderCode;
 
 
     /**
-     *  skuid
+     *  来源id
      *
      */
-    private Long productSkuId;
+    private Long sourceId;
 
 
     /**
-     *  sku编码
+     *  来源单号
      *
      */
-    private String productSkuCode;
+    private String sourceCode;
 
 
     /**
-     *  冗余 商品名称
+     *  来源业务单据时间
      *
      */
-    private String productSkuName;
+    private Date sourceBusinessTime;
+
+
+    /**
+     *  所在仓库id
+     *
+     */
+    private Long warehouseId;
 
 
     /**
@@ -78,38 +73,17 @@ public class PsiTransferringOrder implements Serializable {
 
 
     /**
-     *  已入库数量
+     *  入库数量
      *
      */
-    private Integer receivedStorageCount;
-
-
-    /**
-     *  未入库数量
-     *
-     */
-    private Integer notYetStorageCount;
-
-
-    /**
-     *  调拨单状态
-     *
-     */
-    private Integer transferringStatus;
+    private Integer receivedCount;
 
 
     /**
      *  入库状态，1未入库、2部分入库、3全部入库、0已经关闭
      *
      */
-    private Integer relationStorageStatus;
-
-
-    /**
-     *  数据类型：1:调拨， 2: 销售
-     *
-     */
-    private Integer addType;
+    private Integer storageStatus;
 
 
     /**
@@ -120,7 +94,7 @@ public class PsiTransferringOrder implements Serializable {
 
 
     /**
-     *  备注
+     *  单据备注
      *
      */
     private String remarks;

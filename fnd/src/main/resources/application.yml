@@ -32,6 +32,6 @@ mybatis-plus:
     cache-enabled: false
     # log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 server:
-  port: 8088
+  port: 8080
     #servlet:
   # context-path: "/api"

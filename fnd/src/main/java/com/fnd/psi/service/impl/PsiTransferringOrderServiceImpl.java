@@ -1,20 +1,20 @@
 package com.fnd.psi.service.impl;
 
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fnd.psi.constant.StorageStatusEnum;
 import com.fnd.psi.dto.PsiTransferringOrderDTO;
 import com.fnd.psi.dto.PsiTransferringOrderUpdateDTO;
 import com.fnd.psi.dto.PsiTransferringOrderUpdateStatusDTO;
 import com.fnd.psi.dto.ResultVo;
+import com.fnd.psi.dto.storage.PsiStorageOrderDTO;
 import com.fnd.psi.dto.user.PsiUserDTO;
 import com.fnd.psi.mapper.PsiTransferringOrderMapper;
 import com.fnd.psi.model.PsiTransferringOrder;
 import com.fnd.psi.security.FndSecurityContextUtil;
+import com.fnd.psi.service.PsiStorageOrderService;
 import com.fnd.psi.service.PsiTransferringOrderService;
-import com.fnd.psi.utils.CopyBeanUtils;
-import com.fnd.psi.utils.IntegerUtils;
-import com.fnd.psi.utils.ResultUtils;
-import com.fnd.psi.utils.ResultVoUtil;
+import com.fnd.psi.utils.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,6 +34,7 @@ import java.util.Date;
 public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferringOrderMapper, PsiTransferringOrder> implements PsiTransferringOrderService {
 
     private ResultUtils resultUtils;
+    private PsiStorageOrderService psiStorageOrderService;
 
     @Override
     @Transactional(rollbackFor = Throwable.class)
@@ -42,6 +43,7 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
         buildPsiTransferringOrderDTO(psiTransferringOrderDTO, user);
 
         PsiTransferringOrder psiTransferringOrder = CopyBeanUtils.convert(psiTransferringOrderDTO, PsiTransferringOrder.class);
+        psiTransferringOrder.setTransferCode(PSICodeUtils.getTransferringOrderCode());
         this.save(psiTransferringOrder);
 
         return resultUtils.returnSuccess(psiTransferringOrder);
@@ -70,7 +72,9 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
         this.updateById(psiTransferringOrder);
 
         //生成入库单
-        log.info("生成入库单");
+        PsiStorageOrderDTO psiStorageOrderDTO = buildStorageOrderDTO(psiTransferringOrder, psiTransferringOrderUpdateDTO);
+        log.info("生成入库单， psiStorageOrderDTO： {}", JSONUtil.toJsonStr(psiStorageOrderDTO));
+        psiStorageOrderService.createStorageOrder(psiStorageOrderDTO);
 
         return  resultUtils.returnSuccess(CopyBeanUtils.convert(psiTransferringOrder, PsiTransferringOrderDTO.class));
     }
@@ -102,4 +106,19 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
     }
 
 
+    private PsiStorageOrderDTO buildStorageOrderDTO(PsiTransferringOrder psiTransferringOrder, PsiTransferringOrderUpdateDTO psiTransferringOrderUpdateDTO) {
+        PsiStorageOrderDTO psiStorageOrderDTO = new PsiStorageOrderDTO();
+        psiStorageOrderDTO.setWarehouseId(psiTransferringOrderUpdateDTO.getTargetWarehouseId());
+        psiStorageOrderDTO.setSourceId(psiTransferringOrder.getId());
+        psiStorageOrderDTO.setSourceCode(psiTransferringOrder.getTransferCode());
+        psiStorageOrderDTO.setSourceBusinessTime(psiTransferringOrder.getGmtModified());
+        psiStorageOrderDTO.setProductCount(psiTransferringOrderUpdateDTO.getProductCount());
+        psiStorageOrderDTO.setReceivedCount(psiTransferringOrderUpdateDTO.getProductCount());
+        psiStorageOrderDTO.setStorageStatus(StorageStatusEnum.ALL_WAREHOUSING.getCode());
+        psiStorageOrderDTO.setBelongUserId(psiTransferringOrder.getBelongUserId());
+        psiStorageOrderDTO.setCreateBy(psiTransferringOrder.getUpdateBy());
+        psiStorageOrderDTO.setUpdateBy(psiTransferringOrder.getUpdateBy());
+
+        return psiStorageOrderDTO;
+    }
 }
