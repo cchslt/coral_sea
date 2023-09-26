@@ -7,27 +7,23 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `t_inventory_change_log`;
 CREATE TABLE `t_inventory_change_log` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '自增主键',
-  `product_spu_id` bigint(20) DEFAULT NULL COMMENT 'spu id',
-  `product_sku_id` bigint(20) DEFAULT NULL COMMENT 'sku id',
-  `change_type` tinyint(4) NOT NULL DEFAULT '1' COMMENT '库存变更类型:1:增加,2:减少,3占用',
-  `inventory_type` tinyint(4) NOT NULL DEFAULT '1' COMMENT '变更库存类型:1:可售库存,2:可用,3待入库,4,已上架,5未上架,6待出库,7在途,8不良品,9占用,10虚拟',
-  `change_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '变更数量 ',
-  `change_source_code` varchar(64) DEFAULT NULL COMMENT '变更源编码,eg:order_code',
-  `change_remark` varchar(512) DEFAULT NULL COMMENT '变更占用备注',
-  `is_deleted` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否删除0:未删除,1删除',
-  `create_by` bigint(20) DEFAULT '0' COMMENT '创建人',
-  `update_by` bigint(20) DEFAULT '0' COMMENT '最后修改人',
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增主键',
+  `product_sku_id` bigint DEFAULT NULL COMMENT 'sku id',
+  `warehouse_id` bigint DEFAULT NULL,
+  `change_type` tinyint NOT NULL DEFAULT '1' COMMENT '库存变更类型:1:增加,2:减少',
+  `inventory_type` tinyint NOT NULL DEFAULT '1' COMMENT '变更库存类型:1:可售库存,2:可用,3待入库,4占用',
+  `change_quantity` int NOT NULL DEFAULT '0' COMMENT '变更数量 ',
+  `change_source_code` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '变更源编码,eg:order_code',
+  `change_remark` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '变更占用备注',
+  `is_deleted` tinyint NOT NULL DEFAULT '0' COMMENT '是否删除0:未删除,1删除',
+  `create_by` bigint DEFAULT '0' COMMENT '创建人',
+  `update_by` bigint DEFAULT '0' COMMENT '最后修改人',
   `gmt_create` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `gmt_modified` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `out_put_storage_code` varchar(128) DEFAULT NULL COMMENT '出入库单号',
-  `assocation_business_type` int(11) DEFAULT NULL COMMENT '关联业务类型 1-采购入库 2-调拨入库 3-售后入库 4-其他入库 5-销售入库 6-销售出库 7-其他出库 8-采购退货',
-  `warehouse_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  KEY `index_product_spu_id` (`product_spu_id`) USING BTREE,
   KEY `index_product_sku_id` (`product_sku_id`) USING BTREE,
   KEY `index_inventory_type` (`inventory_type`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=215641 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='psi库存变更记录主表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='库存变更记录主表';
 
 -- ----------------------------
 -- Table structure for t_psi_in_warehouse_user_relation

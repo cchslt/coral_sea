@@ -37,7 +37,7 @@ public class PsiStorageOrderServiceImpl extends ServiceImpl<PsiStorageOrderMappe
 
         // 操作库存
         PsiInventoryDTO psiInventoryDTO = buildPsiInventoryDTO(psiStorageOrder);
-        psiInventoryService.addOrUpdate(psiInventoryDTO);
+        psiInventoryService.addOrUpdate(psiInventoryDTO, psiStorageOrder.getStorageOrderCode());
 
         return psiStorageOrder;
     }
