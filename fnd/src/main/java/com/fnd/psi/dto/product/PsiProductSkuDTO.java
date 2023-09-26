@@ -32,11 +32,17 @@ public class PsiProductSkuDTO extends BaseDTO {
      */
     @ApiModelProperty("创建userid")
     private Long createUserId;
+
+    @ApiModelProperty("创建username")
+    private String createUserName;
     /**
      * 修改userid
      */
     @ApiModelProperty("修改userid")
     private Long modifyUserId;
+
+    @ApiModelProperty("修改username")
+    private String modifyUserName;
 
 
 }

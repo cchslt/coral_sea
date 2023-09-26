@@ -1,5 +1,6 @@
 package com.fnd.psi.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
@@ -8,15 +9,15 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fnd.psi.constant.StorageStatusEnum;
 import com.fnd.psi.dto.*;
-import com.fnd.psi.dto.product.PsiProductSkuDTO;
 import com.fnd.psi.dto.storage.PsiStorageOrderDTO;
 import com.fnd.psi.dto.user.PsiUserDTO;
 import com.fnd.psi.mapper.PsiTransferringOrderMapper;
-import com.fnd.psi.model.PsiProductSku;
 import com.fnd.psi.model.PsiTransferringOrder;
+import com.fnd.psi.model.PsiUser;
 import com.fnd.psi.security.FndSecurityContextUtil;
 import com.fnd.psi.service.PsiStorageOrderService;
 import com.fnd.psi.service.PsiTransferringOrderService;
+import com.fnd.psi.service.UserService;
 import com.fnd.psi.utils.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @Author: chenchaohai
@@ -38,6 +42,7 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
 
     private ResultUtils resultUtils;
     private PsiStorageOrderService psiStorageOrderService;
+    private UserService userService;
 
     @Override
     public ResultVo<PageDTO<PsiTransferringOrderDTO>> listPage(PsiTransferringOrderQuery psiTransferringOrderQuery) {
@@ -55,6 +60,20 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
 
         PageDTO<PsiTransferringOrderDTO> resultPage= CopyBeanUtils.convert(selectPage, PageDTO.class);
         resultPage.setPages(selectPage.getPages());
+
+        Set<Long> userIds = CollUtil.newHashSet();
+        resultPage.getRecords().forEach(x -> {
+            userIds.add(x.getCreateBy());
+            userIds.add(x.getUpdateBy());
+        });
+
+        Map<Long, String> userMap = userService.queryByUserIds(userIds)
+                .stream().collect(Collectors.toMap(PsiUser::getId, PsiUser::getUserName));
+
+        resultPage.getRecords().forEach(x -> {
+            x.setCreateByName(userMap.get(x.getCreateBy()));
+            x.setUpdateByName(userMap.get(x.getUpdateBy()));
+        });
 
         return resultUtils.returnSuccess(resultPage);
     }

@@ -98,9 +98,15 @@ public class PsiTransferringOrderDTO  extends BaseDTO {
      */
     @ApiModelProperty("创建人")
     private Long createBy;
+
+    @ApiModelProperty("创建人-名称")
+    private String createByName;
     /**
      * 最后修改人
      */
     @ApiModelProperty("最后修改人")
     private Long updateBy;
+
+    @ApiModelProperty("最后修改人")
+    private String updateByName;
 }

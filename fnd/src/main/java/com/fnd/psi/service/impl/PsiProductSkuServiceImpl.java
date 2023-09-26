@@ -19,6 +19,7 @@ import com.fnd.psi.model.PsiProductSku;
 import com.fnd.psi.model.PsiUser;
 import com.fnd.psi.security.FndSecurityContextUtil;
 import com.fnd.psi.service.PsiProductSkuService;
+import com.fnd.psi.service.UserService;
 import com.fnd.psi.utils.CopyBeanUtils;
 import com.fnd.psi.utils.PSIBaseUtils;
 import com.fnd.psi.utils.ResultUtils;
@@ -29,6 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -43,6 +46,7 @@ import java.util.stream.Collectors;
 public class PsiProductSkuServiceImpl extends ServiceImpl<PsiProductSkuMapper, PsiProductSku> implements PsiProductSkuService {
 
     private ResultUtils resultUtils;
+    private UserService userService;
 
     @Override
     @Transactional(rollbackFor = Throwable.class)
@@ -150,6 +154,19 @@ public class PsiProductSkuServiceImpl extends ServiceImpl<PsiProductSkuMapper, P
         PageDTO<PsiProductSkuDTO> resultPage= CopyBeanUtils.convert(selectPage, PageDTO.class);
         resultPage.setPages(selectPage.getPages());
 
+        Set<Long> userIds = CollUtil.newHashSet();
+        resultPage.getRecords().forEach(x -> {
+            userIds.add(x.getCreateUserId());
+            userIds.add(x.getModifyUserId());
+        });
+
+        Map<Long, String> userMap = userService.queryByUserIds(userIds)
+                .stream().collect(Collectors.toMap(PsiUser::getId, PsiUser::getUserName));
+
+        resultPage.getRecords().forEach(x -> {
+            x.setCreateUserName(userMap.get(x.getCreateUserId()));
+            x.setModifyUserName(userMap.get(x.getModifyUserId()));
+        });
         return resultPage;
     }
 

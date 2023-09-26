@@ -1,5 +1,6 @@
 package com.fnd.psi.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -382,6 +383,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, PsiUser> implements
         updatePsiUser.setGmtModified(date);
         updateById(updatePsiUser);
         return ResultVoUtil.success();
+    }
+
+    @Override
+    public List<PsiUser> queryByUserIds(Set<Long> ids) {
+        List<PsiUser> userList = CollUtil.newArrayList();
+        if (CollUtil.isNotEmpty(ids)) {
+            userList = new LambdaQueryChainWrapper<>(baseMapper)
+                    .in(PsiUser::getId, ids)
+                    .list();
+        }
+        return userList;
     }
 
 

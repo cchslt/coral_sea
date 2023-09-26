@@ -14,6 +14,7 @@ import com.fnd.psi.dto.vo.UserUpdatePasswordDTO;
 import com.fnd.psi.model.PsiUser;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @Author: chenchaohai
@@ -73,4 +74,11 @@ public interface UserService extends IService<PsiUser> {
      * @return
      */
     ResultVo updatePassword(UserUpdatePasswordDTO userDTO);
+
+    /**
+     * 查询用户
+     * @param ids
+     * @return
+     */
+    List<PsiUser> queryByUserIds(Set<Long> ids);
 }
