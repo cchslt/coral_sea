@@ -1,13 +1,17 @@
 package com.fnd.psi.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.fnd.psi.dto.PsiTransferringOrderDTO;
-import com.fnd.psi.dto.PsiTransferringOrderUpdateDTO;
-import com.fnd.psi.dto.PsiTransferringOrderUpdateStatusDTO;
-import com.fnd.psi.dto.ResultVo;
+import com.fnd.psi.dto.*;
 import com.fnd.psi.model.PsiTransferringOrder;
 
 public interface PsiTransferringOrderService extends IService<PsiTransferringOrder> {
+
+    /**
+     * 调拨单信息 列表
+     * @param psiTransferringOrderQuery
+     * @return
+     */
+    ResultVo<PageDTO<PsiTransferringOrderDTO>> listPage(PsiTransferringOrderQuery psiTransferringOrderQuery);
 
     /**
      * 新增调拨单信息

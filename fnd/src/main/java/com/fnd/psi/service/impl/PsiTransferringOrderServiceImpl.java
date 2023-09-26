@@ -1,15 +1,18 @@
 package com.fnd.psi.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fnd.psi.constant.StorageStatusEnum;
-import com.fnd.psi.dto.PsiTransferringOrderDTO;
-import com.fnd.psi.dto.PsiTransferringOrderUpdateDTO;
-import com.fnd.psi.dto.PsiTransferringOrderUpdateStatusDTO;
-import com.fnd.psi.dto.ResultVo;
+import com.fnd.psi.dto.*;
+import com.fnd.psi.dto.product.PsiProductSkuDTO;
 import com.fnd.psi.dto.storage.PsiStorageOrderDTO;
 import com.fnd.psi.dto.user.PsiUserDTO;
 import com.fnd.psi.mapper.PsiTransferringOrderMapper;
+import com.fnd.psi.model.PsiProductSku;
 import com.fnd.psi.model.PsiTransferringOrder;
 import com.fnd.psi.security.FndSecurityContextUtil;
 import com.fnd.psi.service.PsiStorageOrderService;
@@ -35,6 +38,26 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
 
     private ResultUtils resultUtils;
     private PsiStorageOrderService psiStorageOrderService;
+
+    @Override
+    public ResultVo<PageDTO<PsiTransferringOrderDTO>> listPage(PsiTransferringOrderQuery psiTransferringOrderQuery) {
+        Page<PsiTransferringOrder> page = PSIBaseUtils.buildPageByQuery(psiTransferringOrderQuery);
+
+        LambdaQueryWrapper<PsiTransferringOrder> queryWrapper = new LambdaQueryWrapper();
+        queryWrapper.like(StrUtil.isNotBlank(psiTransferringOrderQuery.getTransferCode()), PsiTransferringOrder::getTransferCode, psiTransferringOrderQuery.getTransferCode());
+        queryWrapper.like(StrUtil.isNotBlank(psiTransferringOrderQuery.getProductSkuName()), PsiTransferringOrder::getProductSkuName, psiTransferringOrderQuery.getProductSkuName());
+        queryWrapper.eq(ObjectUtil.isNotNull(psiTransferringOrderQuery.getTransferringStatus()), PsiTransferringOrder::getTransferringStatus, psiTransferringOrderQuery.getTransferringStatus());
+        queryWrapper.eq(ObjectUtil.isNotNull(psiTransferringOrderQuery.getWarehouseId()), PsiTransferringOrder::getSourceWarehouseId, psiTransferringOrderQuery.getWarehouseId());
+        queryWrapper.eq(ObjectUtil.isNotNull(psiTransferringOrderQuery.getProductSkuId()), PsiTransferringOrder::getProductSkuId, psiTransferringOrderQuery.getProductSkuId());
+        queryWrapper.eq(PsiTransferringOrder::getIsDeleted, 0);
+
+        Page<PsiTransferringOrder> selectPage = baseMapper.selectPage(page, queryWrapper);
+
+        PageDTO<PsiTransferringOrderDTO> resultPage= CopyBeanUtils.convert(selectPage, PageDTO.class);
+        resultPage.setPages(selectPage.getPages());
+
+        return resultUtils.returnSuccess(resultPage);
+    }
 
     @Override
     @Transactional(rollbackFor = Throwable.class)

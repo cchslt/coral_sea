@@ -1,9 +1,6 @@
 package com.fnd.psi.controller;
 
-import com.fnd.psi.dto.PsiTransferringOrderDTO;
-import com.fnd.psi.dto.PsiTransferringOrderUpdateDTO;
-import com.fnd.psi.dto.PsiTransferringOrderUpdateStatusDTO;
-import com.fnd.psi.dto.ResultVo;
+import com.fnd.psi.dto.*;
 import com.fnd.psi.security.FndPreAuthorize;
 import com.fnd.psi.service.PsiTransferringOrderService;
 import io.swagger.annotations.Api;
@@ -28,6 +25,17 @@ public class PsiTransferringOrderController {
 
     @Autowired
     private PsiTransferringOrderService psiTransferringOrderService;
+
+
+    /**
+     * 新增调拨单信息
+     */
+    @ApiOperation("调拨单信息 列表")
+    @RequestMapping(value = "/page", method = RequestMethod.POST)
+    @FndPreAuthorize
+    public ResultVo<PageDTO<PsiTransferringOrderDTO>> page(@RequestBody PsiTransferringOrderQuery psiTransferringOrderQuery){
+        return psiTransferringOrderService.listPage(psiTransferringOrderQuery);
+    }
 
 
     /**
