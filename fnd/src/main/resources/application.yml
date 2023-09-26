@@ -13,7 +13,7 @@ spring:
     #国际化配置
     basename: i18n/messages
 logging:
-  config: classpath:logback.xml
+  config: classpath:logback-spring.xml
 
 #mybatis
 mybatis-plus:
@@ -34,6 +34,6 @@ mybatis-plus:
     cache-enabled: false
     # log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 server:
-  port: 8080
+  port: 8088
     #servlet:
   # context-path: "/api"
