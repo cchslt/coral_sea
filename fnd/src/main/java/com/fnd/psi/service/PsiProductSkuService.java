@@ -2,6 +2,7 @@ package com.fnd.psi.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fnd.psi.dto.PageDTO;
+import com.fnd.psi.dto.ResultVo;
 import com.fnd.psi.dto.product.PsiProductSkuDTO;
 import com.fnd.psi.dto.vo.PsiProductSkuVO;
 import com.fnd.psi.model.PsiProductSku;
@@ -23,6 +24,20 @@ public interface PsiProductSkuService extends IService<PsiProductSku> {
      * @return
      */
     PsiProductSkuDTO update(PsiProductSkuDTO psiProductSku);
+
+    /**
+     *
+     * @param id
+     * @return
+     */
+    ResultVo delete(Long id);
+
+    /**
+     * 详情
+     * @param id
+     * @return
+     */
+    ResultVo<PsiProductSkuDTO> detail(Long id);
 
     /**
      * 查询列表

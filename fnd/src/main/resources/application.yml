@@ -12,6 +12,8 @@ spring:
   messages:
     #国际化配置
     basename: i18n/messages
+logging:
+  config: classpath:logback.xml
 
 #mybatis
 mybatis-plus:

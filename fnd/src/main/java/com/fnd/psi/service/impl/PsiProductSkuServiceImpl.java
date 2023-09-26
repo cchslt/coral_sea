@@ -1,14 +1,17 @@
 package com.fnd.psi.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fnd.psi.constant.CommonConstant;
 import com.fnd.psi.constant.ErrorCodeConstants;
 import com.fnd.psi.dto.PageDTO;
 import com.fnd.psi.dto.ResultVo;
 import com.fnd.psi.dto.product.PsiProductSkuDTO;
+import com.fnd.psi.dto.user.PsiUserDTO;
 import com.fnd.psi.dto.vo.PsiProductSkuVO;
 import com.fnd.psi.exception.XXException;
 import com.fnd.psi.mapper.PsiProductSkuMapper;
@@ -24,7 +27,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Author: chenchaohai
@@ -75,6 +80,39 @@ public class PsiProductSkuServiceImpl extends ServiceImpl<PsiProductSkuMapper, P
         productSku.setModifyUserId(userId);
 
         return psiProductSku;
+    }
+
+    @Override
+    public ResultVo delete(Long id) {
+        LambdaQueryWrapper<PsiProductSku> queryWrapper = new LambdaQueryWrapper();
+        queryWrapper.eq(PsiProductSku::getId, id);
+        queryWrapper.eq(PsiProductSku::getIsDeleted, CommonConstant.IS_DELETED_FALSE);
+
+        List<PsiProductSku> productSkus = this.list(queryWrapper);
+        if (CollUtil.isEmpty(productSkus)) {
+            return resultUtils.success();
+        }
+
+        final PsiUserDTO psiUserDTO = FndSecurityContextUtil.getContext().getPsiUserInfoDTO().getUser();
+        lambdaUpdate().set(PsiProductSku::getIsDeleted, CommonConstant.IS_DELETED_TRUE)
+                .set(PsiProductSku::getModifyUserId, psiUserDTO.getId())
+                .set(PsiProductSku::getGmtModified, new Date())
+                .eq(PsiProductSku::getId, id)
+                .eq(PsiProductSku::getIsDeleted,CommonConstant.IS_DELETED_FALSE)
+                .update();
+
+        return resultUtils.success();
+    }
+
+    @Override
+    public ResultVo<PsiProductSkuDTO> detail(Long id) {
+        LambdaQueryWrapper<PsiProductSku> queryWrapper = new LambdaQueryWrapper();
+        queryWrapper.eq(PsiProductSku::getId, id);
+        queryWrapper.eq(PsiProductSku::getIsDeleted, CommonConstant.IS_DELETED_FALSE);
+
+        final PsiProductSku psiProductSku = this.getOne(queryWrapper);
+
+        return resultUtils.returnSuccess(CopyBeanUtils.convert(psiProductSku, PsiProductSkuDTO.class));
     }
 
 

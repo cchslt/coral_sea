@@ -43,6 +43,20 @@ public class PsiProductSkuController {
         return resultUtils.returnSuccess(psiProductSkuService.save(psiProductSku));
     }
 
+    @ApiOperation("商品sku信息表 删除")
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
+    @FndPreAuthorize
+    public ResultVo<PsiProductSkuDTO> delete(@PathVariable("id") Long id){
+        return psiProductSkuService.delete(id);
+    }
+
+    @ApiOperation("商品sku信息表 详情")
+    @RequestMapping(value = "/detail/{id}", method = RequestMethod.POST)
+    @FndPreAuthorize
+    public ResultVo<PsiProductSkuDTO> detail(@PathVariable("id") Long id){
+        return psiProductSkuService.detail(id);
+    }
+
 
 
     @ApiOperation("商品sku信息表 列表")
