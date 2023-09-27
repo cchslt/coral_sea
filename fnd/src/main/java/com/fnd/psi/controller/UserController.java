@@ -49,7 +49,7 @@ public class UserController {
     @ApiOperation("获取用户详情")
     @GetMapping(value = {"/info"})
     public ResultVo<PsiUserInfoDTO> info() {
-        return resultUtils.returnSuccess(userService.info(null));
+        return resultUtils.returnSuccess(resultUtils.returnSuccess(userService.info(null)));
     }
 
 

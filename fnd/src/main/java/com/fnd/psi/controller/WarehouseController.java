@@ -24,7 +24,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/warehouse")
-@Api(value = "warehouse", tags = "仓库模块 - Purchase,Sales & Inventory")
+@Api(value = "warehouse", tags = "仓库模块")
 public class WarehouseController {
 
     private WarehouseInfoService warehouseInfoService;
