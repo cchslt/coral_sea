@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 
-//@RestController
-//@RequestMapping("/inventory")
-//@Api(value = "inventory", tags = "库存相关")
-//@AllArgsConstructor
+@RestController
+@RequestMapping("/inventory")
+@Api(value = "inventory", tags = "库存相关")
+@AllArgsConstructor
 public class InventoryController {
 
     private PsiInventoryService psiInventoryService;

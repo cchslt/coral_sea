@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @Desc:
  * @See:
  */
-@Api(value = "/makeProduct", description = "制作作品相关", tags = {"PsiMakeProductOrderController"})
+@Api(value = "/makeProduct", description = "PsiMakeProductOrderController", tags = {"制作作品相关"})
 @RestController
 @RequestMapping(value = "/makeProduct" , produces = {"application/json"})
 public class PsiMakeProductOrderController {
