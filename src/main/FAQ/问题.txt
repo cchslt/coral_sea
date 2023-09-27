@@ -50,8 +50,8 @@
 		 yum remove xxx #依次删除安装包
 		 
 		 如果启动报： --initialize specified but the data directory has files in it. Aborting.
-		 解释：之前可能已经启动过mysql导致mysql数据目录中存在文件 
-		 解决：cat /etc/my.cnf | grep datadir  #过滤出mysql数据目录
+		 解释：之前可能已经启动过mysql导致mysql数据目录中存在文件
+		 解决：cat /etc/my.cnf | grep datadir #过滤出mysql数据目录
 			datadir=/var/lib/mysql
 			rm -rf /var/lib/mysql/* #删除数据目录下文件
 			systemctl restart mysqld
