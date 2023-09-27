@@ -37,7 +37,7 @@ public class PsiProductSkuController {
      * 新增商品sku信息表
      */
     @ApiOperation("商品sku信息表 新增")
-    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    @RequestMapping(value = "/saveOrUpdate", method = RequestMethod.POST)
     @FndPreAuthorize
     public ResultVo<PsiProductSkuDTO> save(@RequestBody @Validated PsiProductSkuDTO psiProductSku){
         return resultUtils.returnSuccess(psiProductSkuService.save(psiProductSku));
