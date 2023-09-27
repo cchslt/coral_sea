@@ -1,7 +1,4 @@
 
-SET NAMES utf8mb4;
-SET FOREIGN_KEY_CHECKS = 0;
-
 -- ----------------------------
 -- Table structure for t_inventory_change_log
 -- ----------------------------
@@ -468,5 +465,3 @@ CREATE TABLE `t_warehouse_user_relation` (
   KEY `index_user_id` (`user_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=837 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='卖家仓库关系配置表';
 
-
-SET FOREIGN_KEY_CHECKS = 1;

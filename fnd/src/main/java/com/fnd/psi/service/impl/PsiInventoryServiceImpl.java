@@ -5,17 +5,24 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fnd.psi.constant.InventoryChangeEnum;
 import com.fnd.psi.constant.InventoryChangeTypeEnum;
 import com.fnd.psi.dto.inventory.PsiInventoryDTO;
+import com.fnd.psi.dto.vo.PsiInventoryVo;
+import com.fnd.psi.dto.vo.PsiProductInventoryVO;
 import com.fnd.psi.mapper.PsiInventoryMapper;
 import com.fnd.psi.model.InventoryChangeLog;
 import com.fnd.psi.model.PsiInventory;
+import com.fnd.psi.model.PsiProductSku;
 import com.fnd.psi.service.InventoryChangeLogService;
 import com.fnd.psi.service.PsiInventoryService;
+import com.fnd.psi.service.PsiProductSkuService;
 import com.fnd.psi.utils.CopyBeanUtils;
+import com.fnd.psi.utils.IntegerUtils;
 import com.fnd.psi.utils.ResultUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 /**
  * @Author: chenchaohai
@@ -30,6 +37,7 @@ public class PsiInventoryServiceImpl extends ServiceImpl<PsiInventoryMapper, Psi
 
     private ResultUtils resultUtils;
     private InventoryChangeLogService inventoryChangeLogService;
+    private PsiProductSkuService psiProductSkuService;
 
     @Override
     @Transactional(rollbackFor = Throwable.class)
@@ -62,6 +70,21 @@ public class PsiInventoryServiceImpl extends ServiceImpl<PsiInventoryMapper, Psi
         inventoryChangeLogService.save(inventoryChangeLog);
 
         return psiInventory;
+    }
+
+    @Override
+    public PsiProductInventoryVO permissionVO(PsiInventoryVo permissionVO) {
+        PsiProductInventoryVO psiProductInventoryVO = new PsiProductInventoryVO();
+
+        PsiProductSku psiProductSku = Optional.ofNullable(psiProductSkuService.getById(permissionVO.getProductSkuId())).orElse(new PsiProductSku());
+        psiProductInventoryVO.setProductSkuId(psiProductSku.getId());
+        psiProductInventoryVO.setProductSkuCode(psiProductSku.getSkuCode());
+        psiProductInventoryVO.setProductSkuName(psiProductSku.getSkuProductName());
+
+        PsiInventory psiInventory = Optional.ofNullable(findPsiInventoryBySkuAndWarehouseId(psiProductSku.getId(), permissionVO.getWarehouseId())).orElse(new PsiInventory());
+        psiProductInventoryVO.setSellableQuantity(IntegerUtils.optionalToZero(psiInventory.getSellableQuantity()));
+
+        return psiProductInventoryVO;
     }
 
     public PsiInventory findPsiInventoryBySkuAndWarehouseId(Long skuId, Long warehouseId) {

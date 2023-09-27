@@ -18,19 +18,19 @@ import org.springframework.web.bind.annotation.RestController;
  * @Desc:
  * @See:
  */
-@Api(value = "/psiTransferringOrder", description = "调拨单信息相关接口", tags = {"PsiTransferringOrderController"})
+@Api(value = "/makeProduct", description = "制作作品相关", tags = {"PsiMakeProductOrderController"})
 @RestController
-@RequestMapping(value = "/psiTransferringOrder" , produces = {"application/json"})
-public class PsiTransferringOrderController {
+@RequestMapping(value = "/makeProduct" , produces = {"application/json"})
+public class PsiMakeProductOrderController {
 
     @Autowired
     private PsiTransferringOrderService psiTransferringOrderService;
 
 
     /**
-     * 新增调拨单信息
+     * 新增制作作品信息
      */
-    @ApiOperation("调拨单信息 列表")
+    @ApiOperation("制作作品信息 列表")
     @RequestMapping(value = "/page", method = RequestMethod.POST)
     @FndPreAuthorize
     public ResultVo<PageDTO<PsiTransferringOrderDTO>> page(@RequestBody PsiTransferringOrderQuery psiTransferringOrderQuery){
@@ -39,9 +39,9 @@ public class PsiTransferringOrderController {
 
 
     /**
-     * 新增调拨单信息
+     * 新增制作作品信息
      */
-    @ApiOperation("调拨单信息 新增")
+    @ApiOperation("制作作品信息 新增")
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     @FndPreAuthorize
     public ResultVo<PsiTransferringOrderDTO> save(@RequestBody @Validated PsiTransferringOrderDTO psiTransferringOrder){
@@ -50,9 +50,9 @@ public class PsiTransferringOrderController {
 
 
     /**
-     * 新增调拨单信息
+     *
      */
-    @ApiOperation("调拨单信息-调拨")
+    @ApiOperation("制作作品单-调拨")
     @RequestMapping(value = "/transferring", method = RequestMethod.POST)
     @FndPreAuthorize
     public ResultVo<PsiTransferringOrderDTO> transferring(@RequestBody @Validated PsiTransferringOrderUpdateDTO psiTransferringOrderUpdateDTO){
@@ -60,7 +60,7 @@ public class PsiTransferringOrderController {
     }
 
 
-    @ApiOperation("调拨单信息-修改状态")
+    @ApiOperation("制作作品信息-修改状态")
     @RequestMapping(value = "/updateStatus", method = RequestMethod.POST)
     @FndPreAuthorize
     public ResultVo<PsiTransferringOrderDTO> updateStatus(@RequestBody @Validated PsiTransferringOrderUpdateStatusDTO psiTransferringOrderUpdateStatusDTO){

@@ -72,23 +72,23 @@ public class WarehouseController {
         return warehouseInfoService.updateWarehouse(warehouseInfoVO);
     }
 
-    @ApiOperation(value = "仓库调整优先级-上升", httpMethod = "GET")
-    @FndPreAuthorize
-    @GetMapping(value = "/upPriority/{warehouseId}")
+//    @ApiOperation(value = "仓库调整优先级-上升", httpMethod = "GET")
+//    @FndPreAuthorize
+//    @GetMapping(value = "/upPriority/{warehouseId}")
     public ResultVo upPriority(@PathVariable(value = "warehouseId") Long warehouseId) {
         return warehouseInfoService.upPriority(warehouseId);
     }
 
-    @ApiOperation(value = "仓库调整优先级-下沉", httpMethod = "GET")
-    @FndPreAuthorize
-    @GetMapping(value = "/downPriority/{warehouseId}")
+//    @ApiOperation(value = "仓库调整优先级-下沉", httpMethod = "GET")
+//    @FndPreAuthorize
+//    @GetMapping(value = "/downPriority/{warehouseId}")
     public ResultVo downPriority(@PathVariable(value = "warehouseId") Long warehouseId) {
         return warehouseInfoService.downPriority(warehouseId);
     }
 
-    @ApiOperation(value = "仓库按照优先级查询", httpMethod = "POST")
-    @FndPreAuthorize
-    @PostMapping(value = "/selectPriority")
+//    @ApiOperation(value = "仓库按照优先级查询", httpMethod = "POST")
+//    @FndPreAuthorize
+//    @PostMapping(value = "/selectPriority")
     public ResultVo selectPriority(@RequestBody BasePageQuery basePageQuery) {
         return warehouseInfoService.selectPriority(basePageQuery);
     }
