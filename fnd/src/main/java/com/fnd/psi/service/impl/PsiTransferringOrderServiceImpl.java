@@ -77,6 +77,7 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
         Page<PsiTransferringOrder> selectPage = baseMapper.selectPage(page, queryWrapper);
 
         resultPage= CopyBeanUtils.convert(selectPage, PageDTO.class);
+        resultPage.setRecords(CopyBeanUtils.copyList(selectPage.getRecords(), PsiTransferringOrderDTO.class));
         resultPage.setPages(selectPage.getPages());
 
         Set<Long> userIds = CollUtil.newHashSet();

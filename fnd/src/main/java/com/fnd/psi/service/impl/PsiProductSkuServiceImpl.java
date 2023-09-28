@@ -152,10 +152,11 @@ public class PsiProductSkuServiceImpl extends ServiceImpl<PsiProductSkuMapper, P
         Page<PsiProductSku> selectPage = baseMapper.selectPage(page, queryWrapper);
 
         PageDTO<PsiProductSkuDTO> resultPage= CopyBeanUtils.convert(selectPage, PageDTO.class);
+        resultPage.setRecords(CopyBeanUtils.copyList(selectPage.getRecords(), PsiProductSkuDTO.class));
         resultPage.setPages(selectPage.getPages());
 
         Set<Long> userIds = CollUtil.newHashSet();
-        resultPage.getRecords().forEach(x -> {
+        selectPage.getRecords().forEach(x -> {
             userIds.add(x.getCreateUserId());
             userIds.add(x.getModifyUserId());
         });
