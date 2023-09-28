@@ -14,17 +14,21 @@ import com.fnd.psi.dto.user.PsiUserDTO;
 import com.fnd.psi.mapper.PsiTransferringOrderMapper;
 import com.fnd.psi.model.PsiTransferringOrder;
 import com.fnd.psi.model.PsiUser;
+import com.fnd.psi.model.WarehouseUserRelation;
 import com.fnd.psi.security.FndSecurityContextUtil;
 import com.fnd.psi.service.PsiStorageOrderService;
 import com.fnd.psi.service.PsiTransferringOrderService;
 import com.fnd.psi.service.UserService;
+import com.fnd.psi.service.WarehouseUserRelationService;
 import com.fnd.psi.utils.*;
+import com.google.common.collect.Sets;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -43,10 +47,14 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
     private ResultUtils resultUtils;
     private PsiStorageOrderService psiStorageOrderService;
     private UserService userService;
+    private WarehouseUserRelationService warehouseUserRelationService;
 
     @Override
     public ResultVo<PageDTO<PsiTransferringOrderDTO>> listPage(PsiTransferringOrderQuery psiTransferringOrderQuery) {
+        PageDTO<PsiTransferringOrderDTO> resultPage= CopyBeanUtils.convert(psiTransferringOrderQuery, PageDTO.class);
         Page<PsiTransferringOrder> page = PSIBaseUtils.buildPageByQuery(psiTransferringOrderQuery);
+
+        final PsiUserDTO user = FndSecurityContextUtil.getContext().getPsiUserInfoDTO().getUser();
 
         LambdaQueryWrapper<PsiTransferringOrder> queryWrapper = new LambdaQueryWrapper();
         queryWrapper.like(StrUtil.isNotBlank(psiTransferringOrderQuery.getTransferCode()), PsiTransferringOrder::getTransferCode, psiTransferringOrderQuery.getTransferCode());
@@ -56,9 +64,19 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
         queryWrapper.eq(ObjectUtil.isNotNull(psiTransferringOrderQuery.getProductSkuId()), PsiTransferringOrder::getProductSkuId, psiTransferringOrderQuery.getProductSkuId());
         queryWrapper.eq(PsiTransferringOrder::getIsDeleted, 0);
 
+        List<Long> warehouseIdList = CollUtil.newArrayList();
+        if (!user.getLevel().equals(0)) {
+            List<WarehouseUserRelation> warehouseIdByUserIds = warehouseUserRelationService.getWarehouseIdByUserIds(Sets.newHashSet(user.getId()));
+            warehouseIdList = warehouseIdByUserIds.stream().map(WarehouseUserRelation::getWarehouseId).collect(Collectors.toList());
+            if (CollUtil.isEmpty(warehouseIdList)) {
+                return resultUtils.returnSuccess(resultPage);
+            }
+            queryWrapper.in(PsiTransferringOrder::getSourceWarehouseId, warehouseIdList);
+        }
+
         Page<PsiTransferringOrder> selectPage = baseMapper.selectPage(page, queryWrapper);
 
-        PageDTO<PsiTransferringOrderDTO> resultPage= CopyBeanUtils.convert(selectPage, PageDTO.class);
+        resultPage= CopyBeanUtils.convert(selectPage, PageDTO.class);
         resultPage.setPages(selectPage.getPages());
 
         Set<Long> userIds = CollUtil.newHashSet();
