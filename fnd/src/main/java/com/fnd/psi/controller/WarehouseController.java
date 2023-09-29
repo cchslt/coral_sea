@@ -3,6 +3,7 @@ package com.fnd.psi.controller;
 import com.fnd.psi.dto.BasePageQuery;
 import com.fnd.psi.dto.PageDTO;
 import com.fnd.psi.dto.ResultVo;
+import com.fnd.psi.dto.product.PsiProductSkuDTO;
 import com.fnd.psi.dto.vo.BaseDictionariesVO;
 import com.fnd.psi.dto.vo.WarehouseInfoVO;
 import com.fnd.psi.security.FndPreAuthorize;
@@ -72,25 +73,12 @@ public class WarehouseController {
         return warehouseInfoService.updateWarehouse(warehouseInfoVO);
     }
 
-//    @ApiOperation(value = "仓库调整优先级-上升", httpMethod = "GET")
-//    @FndPreAuthorize
-//    @GetMapping(value = "/upPriority/{warehouseId}")
-    public ResultVo upPriority(@PathVariable(value = "warehouseId") Long warehouseId) {
-        return warehouseInfoService.upPriority(warehouseId);
-    }
 
-//    @ApiOperation(value = "仓库调整优先级-下沉", httpMethod = "GET")
-//    @FndPreAuthorize
-//    @GetMapping(value = "/downPriority/{warehouseId}")
-    public ResultVo downPriority(@PathVariable(value = "warehouseId") Long warehouseId) {
-        return warehouseInfoService.downPriority(warehouseId);
-    }
-
-//    @ApiOperation(value = "仓库按照优先级查询", httpMethod = "POST")
-//    @FndPreAuthorize
-//    @PostMapping(value = "/selectPriority")
-    public ResultVo selectPriority(@RequestBody BasePageQuery basePageQuery) {
-        return warehouseInfoService.selectPriority(basePageQuery);
+    @ApiOperation("仓库 删除")
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
+    @FndPreAuthorize
+    public ResultVo delete(@PathVariable("id") Long id){
+        return warehouseInfoService.delete(id);
     }
 
 

@@ -120,10 +120,6 @@ public class WarehouseInfoServiceImpl extends ServiceImpl<WarehouseInfoMapper, W
                 records.forEach(x ->{
                     final WarehouseInfoVO warehouseInfoVO = CopyBeanUtils.convert(x, WarehouseInfoVO.class);
                     warehouseInfoVO.setWarehouseContacter(x.getWarehouseContact());
-                    if (CollUtil.isNotEmpty(warehouseShippingRegionRelations)){
-                        final List<WarehouseShippingRegionRelation> warehouseShippingRegionRelationList = warehouseShippingRegionRelations.stream().filter(y -> y.getWarehouseId().equals(x.getId())).collect(Collectors.toList());
-                        warehouseInfoVO.setShippingRegionIds(warehouseShippingRegionRelationList.stream().map(WarehouseShippingRegionRelation::getAreaId).collect(Collectors.toList()));
-                    }
                     warehouseInfoVOS.add(warehouseInfoVO);
                 });
                 warehouseInfoVOPageDTO.setRecords(warehouseInfoVOS);
@@ -155,9 +151,9 @@ public class WarehouseInfoServiceImpl extends ServiceImpl<WarehouseInfoMapper, W
             psiUser.setCountryId(warehouseInfoVO.getCountryId());
         } else {
             psiUser = FndSecurityContextUtil.getContext().getPsiUserInfoDTO().getUser();
-            if (CollectionUtil.isEmpty(warehouseInfoVO.getShippingRegionIds())) {
-                return resultUtils.returnFailByCode(ErrorCodeConstants.WAREHOUSE_SHOPPING_REGION_CAN_NOT_BE_EMPTY);
-            }
+//            if (CollectionUtil.isEmpty(warehouseInfoVO.getShippingRegionIds())) {
+//                return resultUtils.returnFailByCode(ErrorCodeConstants.WAREHOUSE_SHOPPING_REGION_CAN_NOT_BE_EMPTY);
+//            }
         }
         if (ObjectUtil.isNotNull(psiUser)) {
             warehouseInfo.setCountryId(psiUser.getCountryId());
@@ -171,11 +167,6 @@ public class WarehouseInfoServiceImpl extends ServiceImpl<WarehouseInfoMapper, W
         warehouseInfo.setInventoryPriority(Objects.nonNull(warehouseInfoVO.getInventoryPriority())
                 ?warehouseInfoVO.getInventoryPriority():Integer.MAX_VALUE);
         boolean result = save(warehouseInfo);
-        if (CollectionUtil.isNotEmpty(warehouseInfoVO.getShippingRegionIds())) {
-            String areaNames = warehouseShippingRegionRelationService.addWarehouseShippingRegionRelation(warehouseInfo.getId(), warehouseInfoVO.getShippingRegionIds());
-            warehouseInfo.setShippingRegion(areaNames);
-            result = updateById(warehouseInfo);
-        }
         if (!result) {
             return resultUtils.returnFailByCode(GlobalErrorCodeConstants.SYSTEM_EXCEPTION);
         }
@@ -199,10 +190,7 @@ public class WarehouseInfoServiceImpl extends ServiceImpl<WarehouseInfoMapper, W
         if (ObjectUtil.isNull(warehouseInfoVO.getId())) {
             return resultUtils.returnFailByCode(GlobalErrorCodeConstants.INVALID_PARAMETER);
         }
-        if (CollectionUtil.isEmpty(warehouseInfoVO.getShippingRegionIds())) {
-            return resultUtils.returnFailByCode(ErrorCodeConstants.WAREHOUSE_SHOPPING_REGION_CAN_NOT_BE_EMPTY);
-        }
-        //TODO 验证当前登录人是否与仓库所属人一致
+
 
         WarehouseInfo warehouseInfo = warehouseInfoMapper.selectById(warehouseInfoVO.getId());
         warehouseInfo.setWarehouseName(warehouseInfoVO.getWarehouseName());
@@ -210,10 +198,7 @@ public class WarehouseInfoServiceImpl extends ServiceImpl<WarehouseInfoMapper, W
         warehouseInfo.setWarehousePhone(warehouseInfoVO.getWarehousePhone());
         warehouseInfo.setWarehouseAddress(warehouseInfoVO.getWarehouseAddress());
         warehouseInfo.setWarehouseRemark(warehouseInfoVO.getWarehouseRemark());
-        if(CollectionUtil.isNotEmpty(warehouseInfoVO.getShippingRegionIds())){
-            String areaNames = warehouseShippingRegionRelationService.updateWarehouseShippingRegionRelation(warehouseInfo.getId(), warehouseInfoVO.getShippingRegionIds());
-            warehouseInfo.setShippingRegion(areaNames);
-        }
+
         log.info("updateWarehouse"+ JSONUtil.toJsonStr(warehouseInfoVO));
         int result = warehouseInfoMapper.updateById(warehouseInfo);
         if (result < 1) {
@@ -326,6 +311,19 @@ public class WarehouseInfoServiceImpl extends ServiceImpl<WarehouseInfoMapper, W
             });
         }
         return resultUtils.returnSuccess(baseDictionariesVOS);
+    }
+
+    @Override
+    public ResultVo delete(Long id) {
+        final PsiUserDTO psiUserDTO = FndSecurityContextUtil.getContext().getPsiUserInfoDTO().getUser();
+        lambdaUpdate().set(WarehouseInfo::getIsDeleted, CommonConstant.IS_DELETED_TRUE)
+                .set(WarehouseInfo::getUpdateBy, psiUserDTO.getId())
+                .set(WarehouseInfo::getGmtModified, new Date())
+                .eq(WarehouseInfo::getId, id)
+                .eq(WarehouseInfo::getIsDeleted,CommonConstant.IS_DELETED_FALSE)
+                .update();
+
+        return resultUtils.success();
     }
 
     @Override

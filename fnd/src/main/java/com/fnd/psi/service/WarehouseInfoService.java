@@ -135,4 +135,11 @@ public interface WarehouseInfoService extends IService<WarehouseInfo>{
      * @return
      */
     ResultVo<List<BaseDictionariesVO>> getInWarehouseNameDictionaries(Integer status);
+
+    /**
+     * 删除仓库
+     * @param id
+     * @return
+     */
+    ResultVo delete(Long id);
 }

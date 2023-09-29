@@ -55,8 +55,8 @@ public class WarehouseInfoVO implements Serializable {
     @ApiModelProperty("冗余 发货区域")
     private String shippingRegion;
 
-    @ApiModelProperty("发货区域 id集合")
-    private List<Long> shippingRegionIds;
+//    @ApiModelProperty("发货区域 id集合")
+//    private List<Long> shippingRegionIds;
 
     @ApiModelProperty("发货区域-3级区域数量")
     private Integer shippingRegionCnt;
