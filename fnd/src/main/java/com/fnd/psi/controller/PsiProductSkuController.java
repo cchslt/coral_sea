@@ -3,14 +3,14 @@ package com.fnd.psi.controller;
 import com.fnd.psi.dto.PageDTO;
 import com.fnd.psi.dto.ResultVo;
 import com.fnd.psi.dto.product.PsiProductSkuDTO;
+import com.fnd.psi.dto.vo.PsiProductSkuTransferFlowRequestVO;
+import com.fnd.psi.dto.vo.PsiProductSkuTransferFlowVO;
 import com.fnd.psi.dto.vo.PsiProductSkuVO;
-import com.fnd.psi.model.PsiUser;
 import com.fnd.psi.security.FndPreAuthorize;
 import com.fnd.psi.service.PsiProductSkuService;
 import com.fnd.psi.utils.ResultUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -72,5 +72,16 @@ public class PsiProductSkuController {
     public ResultVo<PageDTO<PsiProductSkuDTO>> listPage(@RequestBody PsiProductSkuVO productSkuVO){
         return resultUtils.returnSuccess(psiProductSkuService.listPage(productSkuVO));
     }
+
+    /**
+     *
+     */
+    @ApiOperation("商品-调拨流水")
+    @RequestMapping(value = "/transferri/flow", method = RequestMethod.POST)
+    @FndPreAuthorize
+    public ResultVo<PageDTO<PsiProductSkuTransferFlowVO>> transferringFlow(@RequestBody @Validated PsiProductSkuTransferFlowRequestVO psiProductSkuTransferFlowVO){
+        return resultUtils.returnSuccess(psiProductSkuService.transferringFlow(psiProductSkuTransferFlowVO));
+    }
+
 
 }
