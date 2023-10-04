@@ -8,6 +8,7 @@ import com.fnd.psi.dto.vo.PsiProductSkuTransferFlowVO;
 import com.fnd.psi.dto.vo.PsiProductSkuVO;
 import com.fnd.psi.security.FndPreAuthorize;
 import com.fnd.psi.service.PsiProductSkuService;
+import com.fnd.psi.service.PsiStorageOrderService;
 import com.fnd.psi.utils.ResultUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,6 +33,8 @@ public class PsiProductSkuController {
     private PsiProductSkuService psiProductSkuService;
     @Autowired
     private ResultUtils resultUtils;
+    @Autowired
+    private PsiStorageOrderService psiStorageOrderService;
 
     /**
      * 新增商品sku信息表
@@ -80,7 +83,7 @@ public class PsiProductSkuController {
     @RequestMapping(value = "/transferri/flow", method = RequestMethod.POST)
     @FndPreAuthorize
     public ResultVo<PageDTO<PsiProductSkuTransferFlowVO>> transferringFlow(@RequestBody @Validated PsiProductSkuTransferFlowRequestVO psiProductSkuTransferFlowVO){
-        return resultUtils.returnSuccess(psiProductSkuService.transferringFlow(psiProductSkuTransferFlowVO));
+        return resultUtils.returnSuccess(psiStorageOrderService.transferringFlow(psiProductSkuTransferFlowVO));
     }
 
 

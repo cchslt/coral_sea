@@ -4,8 +4,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.fnd.psi.dto.PageDTO;
 import com.fnd.psi.dto.ResultVo;
 import com.fnd.psi.dto.product.PsiProductSkuDTO;
-import com.fnd.psi.dto.vo.PsiProductSkuTransferFlowRequestVO;
-import com.fnd.psi.dto.vo.PsiProductSkuTransferFlowVO;
 import com.fnd.psi.dto.vo.PsiProductSkuVO;
 import com.fnd.psi.model.PsiProductSku;
 
@@ -54,12 +52,5 @@ public interface PsiProductSkuService extends IService<PsiProductSku> {
      * @return
      */
     PageDTO<PsiProductSkuDTO> listPage(PsiProductSkuVO productSkuVO);
-
-    /**
-     * 调拨流水
-     * @param psiProductSkuTransferFlowVO
-     * @return
-     */
-    PageDTO<PsiProductSkuTransferFlowVO> transferringFlow(PsiProductSkuTransferFlowRequestVO psiProductSkuTransferFlowVO);
 
 }

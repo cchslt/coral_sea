@@ -12,17 +12,13 @@ import com.fnd.psi.dto.PageDTO;
 import com.fnd.psi.dto.ResultVo;
 import com.fnd.psi.dto.product.PsiProductSkuDTO;
 import com.fnd.psi.dto.user.PsiUserDTO;
-import com.fnd.psi.dto.vo.PsiProductSkuTransferFlowRequestVO;
-import com.fnd.psi.dto.vo.PsiProductSkuTransferFlowVO;
 import com.fnd.psi.dto.vo.PsiProductSkuVO;
 import com.fnd.psi.exception.XXException;
 import com.fnd.psi.mapper.PsiProductSkuMapper;
 import com.fnd.psi.model.PsiProductSku;
-import com.fnd.psi.model.PsiStorageOrder;
 import com.fnd.psi.model.PsiUser;
 import com.fnd.psi.security.FndSecurityContextUtil;
 import com.fnd.psi.service.PsiProductSkuService;
-import com.fnd.psi.service.PsiStorageOrderService;
 import com.fnd.psi.service.UserService;
 import com.fnd.psi.utils.CopyBeanUtils;
 import com.fnd.psi.utils.PSIBaseUtils;
@@ -51,7 +47,6 @@ public class PsiProductSkuServiceImpl extends ServiceImpl<PsiProductSkuMapper, P
 
     private ResultUtils resultUtils;
     private UserService userService;
-    private PsiStorageOrderService psiStorageOrderService;
 
     @Override
     @Transactional(rollbackFor = Throwable.class)
@@ -176,35 +171,5 @@ public class PsiProductSkuServiceImpl extends ServiceImpl<PsiProductSkuMapper, P
         return resultPage;
     }
 
-    @Override
-    public PageDTO<PsiProductSkuTransferFlowVO> transferringFlow(PsiProductSkuTransferFlowRequestVO psiProductSkuTransferFlowVO) {
-        Page<PsiStorageOrder> page = PSIBaseUtils.buildPageByQuery(psiProductSkuTransferFlowVO);
-
-        LambdaQueryWrapper<PsiStorageOrder> queryWrapper = new LambdaQueryWrapper();
-        queryWrapper.eq(PsiStorageOrder::getProductSkuCode, psiProductSkuTransferFlowVO.getSkuCode());
-        queryWrapper.eq(PsiStorageOrder::getIsDeleted, 0);
-
-        Page<PsiStorageOrder> selectPage = psiStorageOrderService.getBaseMapper().selectPage(page, queryWrapper);
-
-        PageDTO<PsiProductSkuTransferFlowVO> resultPage= CopyBeanUtils.convert(selectPage, PageDTO.class);
-        resultPage.setRecords(CopyBeanUtils.copyList(selectPage.getRecords(), PsiProductSkuTransferFlowVO.class));
-        resultPage.setPages(selectPage.getPages());
-
-        Set<Long> userIds = CollUtil.newHashSet();
-        selectPage.getRecords().forEach(x -> {
-            userIds.add(x.getCreateBy());
-        });
-
-        Map<Long, String> userMap = userService.queryByUserIds(userIds)
-                .stream().collect(Collectors.toMap(PsiUser::getId, PsiUser::getUserName));
-
-        resultPage.getRecords().forEach(x -> {
-            x.setCreateUserName(userMap.get(x.getCreateBy()));
-            x.setTargetWarehouseName("xxxx-d");
-            x.setSourceWarehouseName("xxxx-11");
-            x.setProductSkuName("小鸡");
-        });
-        return resultPage;
-    }
 
 }
