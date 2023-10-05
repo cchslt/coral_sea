@@ -30,4 +30,7 @@ public class PsiTransferringOrderQuery extends BasePageQuery {
     @ApiModelProperty("调拨单状态")
     private Integer transferringStatus;
 
+    @ApiModelProperty("入库状态")
+    private Integer relationStorageStatus;
+
 }
