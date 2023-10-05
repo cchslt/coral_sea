@@ -126,7 +126,7 @@ public class WarehouseInfoServiceImpl extends ServiceImpl<WarehouseInfoMapper, W
             }
         }
 
-        return resultUtils.returnSuccess(EnumConvert.convert(warehouseInfoVOPageDTO));
+        return resultUtils.returnSuccess(warehouseInfoVOPageDTO);
     }
 
     @Override
