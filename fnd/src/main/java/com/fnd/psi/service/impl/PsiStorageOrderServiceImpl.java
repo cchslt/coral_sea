@@ -11,9 +11,11 @@ import com.fnd.psi.dto.vo.PsiProductSkuTransferFlowRequestVO;
 import com.fnd.psi.dto.vo.PsiProductSkuTransferFlowVO;
 import com.fnd.psi.mapper.PsiStorageOrderMapper;
 import com.fnd.psi.model.PsiInventory;
+import com.fnd.psi.model.PsiProductSku;
 import com.fnd.psi.model.PsiStorageOrder;
 import com.fnd.psi.model.PsiUser;
 import com.fnd.psi.service.PsiInventoryService;
+import com.fnd.psi.service.PsiProductSkuService;
 import com.fnd.psi.service.PsiStorageOrderService;
 import com.fnd.psi.service.UserService;
 import com.fnd.psi.utils.CopyBeanUtils;
@@ -41,6 +43,7 @@ public class PsiStorageOrderServiceImpl extends ServiceImpl<PsiStorageOrderMappe
 
     private PsiInventoryService psiInventoryService;
     private UserService userService;
+    private PsiProductSkuService psiProductSkuService;
 
     @Override
     @Transactional(rollbackFor = Throwable.class)
@@ -85,18 +88,19 @@ public class PsiStorageOrderServiceImpl extends ServiceImpl<PsiStorageOrderMappe
         resultPage.setPages(selectPage.getPages());
 
         Set<Long> userIds = CollUtil.newHashSet();
-        selectPage.getRecords().forEach(x -> {
-            userIds.add(x.getCreateBy());
-        });
+        selectPage.getRecords().forEach(x -> userIds.add(x.getCreateBy()));
 
         Map<Long, String> userMap = userService.queryByUserIds(userIds)
                 .stream().collect(Collectors.toMap(PsiUser::getId, PsiUser::getUserName));
+
+        Map<String, String> skuMap = psiProductSkuService.findBySkuCodeList(resultPage.getRecords().stream().map(PsiProductSkuTransferFlowVO::getSkuCode).collect(Collectors.toList()))
+                .stream().collect(Collectors.toMap(PsiProductSku::getSkuCode, PsiProductSku::getSkuProductName));
 
         resultPage.getRecords().forEach(x -> {
             x.setCreateUserName(userMap.get(x.getCreateBy()));
             x.setTargetWarehouseName("xxxx-d");
             x.setSourceWarehouseName("xxxx-11");
-            x.setProductSkuName("小鸡");
+            x.setProductSkuName(skuMap.get(x.getSkuCode()));
         });
         return resultPage;
     }

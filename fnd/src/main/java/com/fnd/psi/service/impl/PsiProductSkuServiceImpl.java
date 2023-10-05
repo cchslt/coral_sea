@@ -28,10 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -169,6 +166,15 @@ public class PsiProductSkuServiceImpl extends ServiceImpl<PsiProductSkuMapper, P
             x.setModifyUserName(userMap.get(x.getModifyUserId()));
         });
         return resultPage;
+    }
+
+    @Override
+    public List<PsiProductSku> findBySkuCodeList(List<String> skuCodeList) {
+        LambdaQueryWrapper<PsiProductSku> lambdaQueryWrapper = new LambdaQueryWrapper();
+        lambdaQueryWrapper.in(PsiProductSku::getSkuCode, skuCodeList);
+        lambdaQueryWrapper.eq(PsiProductSku::getIsDeleted, 0);
+
+        return Optional.ofNullable(list(lambdaQueryWrapper)).orElse(CollUtil.newArrayList());
     }
 
 

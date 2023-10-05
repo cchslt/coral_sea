@@ -53,4 +53,12 @@ public interface PsiProductSkuService extends IService<PsiProductSku> {
      */
     PageDTO<PsiProductSkuDTO> listPage(PsiProductSkuVO productSkuVO);
 
+
+    /**
+     *
+     * @param skuCodeList
+     * @return
+     */
+    List<PsiProductSku> findBySkuCodeList(List<String> skuCodeList);
+
 }
