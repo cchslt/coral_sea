@@ -113,7 +113,16 @@ public class PsiProductSkuServiceImpl extends ServiceImpl<PsiProductSkuMapper, P
 
         final PsiProductSku psiProductSku = this.getOne(queryWrapper);
 
-        return resultUtils.returnSuccess(CopyBeanUtils.convert(psiProductSku, PsiProductSkuDTO.class));
+        PsiProductSkuDTO psiProductSkuDTO = CopyBeanUtils.convert(psiProductSku, PsiProductSkuDTO.class);
+
+        Set<Long> userIds = CollUtil.newHashSet(psiProductSkuDTO.getCreateUserId(), psiProductSkuDTO.getModifyUserId());
+        Map<Long, String> userMap = userService.queryByUserIds(userIds)
+                .stream().collect(Collectors.toMap(PsiUser::getId, PsiUser::getUserName));
+
+        psiProductSkuDTO.setCreateUserName(userMap.getOrDefault(psiProductSkuDTO.getCreateUserId(), ""));
+        psiProductSkuDTO.setModifyUserName(userMap.getOrDefault(psiProductSkuDTO.getModifyUserId(), ""));
+
+        return resultUtils.returnSuccess(psiProductSkuDTO);
     }
 
 
