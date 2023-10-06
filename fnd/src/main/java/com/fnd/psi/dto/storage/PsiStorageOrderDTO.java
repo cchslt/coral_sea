@@ -35,10 +35,14 @@ public class PsiStorageOrderDTO extends BaseDTO {
      */
     @ApiModelProperty("来源业务单据时间")
     private Date sourceBusinessTime;
+
+    @ApiModelProperty("所在仓库id")
+    private Long sourceWarehouseId;
+
     /**
      * 所在仓库id
      */
-    @ApiModelProperty("所在仓库id")
+    @ApiModelProperty("目的仓库id")
     private Long warehouseId;
     /**
      * 商品数量
@@ -80,5 +84,8 @@ public class PsiStorageOrderDTO extends BaseDTO {
      */
     @ApiModelProperty("最后修改人")
     private Long updateBy;
+
+    @ApiModelProperty("数据类型：1:调拨， 2: 销售")
+    private Integer addType;
 
 }

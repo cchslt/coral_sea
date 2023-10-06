@@ -16,18 +16,32 @@ import javax.validation.constraints.NotNull;
 @Data
 public class PsiTransferringOrderUpdateDTO extends BaseDTO {
 
+//    /**
+//     * 主键
+//     */
+//    @ApiModelProperty("主键")
+//    @NotNull(message = "id不能为空")
+//    private Long id;
+
     /**
-     * 主键
+     * skuid
      */
-    @ApiModelProperty("主键")
-    @NotNull(message = "id不能为空")
-    private Long id;
+    @ApiModelProperty("skuId")
+    @NotNull(message = "skuId不能为空")
+    private Long skuId;
+
+    /**
+     * 调拨目标仓库id
+     */
+    @ApiModelProperty("调拨仓库id")
+    @NotNull(message = "调拨源仓库不能为空")
+    private Long sourceWarehouseId;
 
     /**
      * 调拨目标仓库id
      */
     @ApiModelProperty("调拨目标仓库id")
-    @NotNull(message = "调拨源仓库不能为空")
+//    @NotNull(message = "调拨目标仓库不能为空")
     private Long targetWarehouseId;
 
     /**
@@ -48,6 +62,7 @@ public class PsiTransferringOrderUpdateDTO extends BaseDTO {
      * 数据类型：1:调拨， 2: 销售
      */
     @ApiModelProperty("数据类型：1:调拨， 2: 销售")
+    @NotNull(message = "数据类型不能为空")
     private Integer addType;
 
     /**

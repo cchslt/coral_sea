@@ -12,14 +12,12 @@ import com.fnd.psi.dto.*;
 import com.fnd.psi.dto.storage.PsiStorageOrderDTO;
 import com.fnd.psi.dto.user.PsiUserDTO;
 import com.fnd.psi.mapper.PsiTransferringOrderMapper;
+import com.fnd.psi.model.PsiProductSku;
 import com.fnd.psi.model.PsiTransferringOrder;
 import com.fnd.psi.model.PsiUser;
 import com.fnd.psi.model.WarehouseUserRelation;
 import com.fnd.psi.security.FndSecurityContextUtil;
-import com.fnd.psi.service.PsiStorageOrderService;
-import com.fnd.psi.service.PsiTransferringOrderService;
-import com.fnd.psi.service.UserService;
-import com.fnd.psi.service.WarehouseUserRelationService;
+import com.fnd.psi.service.*;
 import com.fnd.psi.utils.*;
 import com.google.common.collect.Sets;
 import lombok.AllArgsConstructor;
@@ -32,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.sun.tools.doclint.Entity.psi;
 
 /**
  * @Author: chenchaohai
@@ -48,6 +48,7 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
     private PsiStorageOrderService psiStorageOrderService;
     private UserService userService;
     private WarehouseUserRelationService warehouseUserRelationService;
+    private PsiProductSkuService psiProductSkuService;
 
     @Override
     public ResultVo<PageDTO<PsiTransferringOrderDTO>> listPage(PsiTransferringOrderQuery psiTransferringOrderQuery) {
@@ -113,8 +114,8 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
 
     @Override
     @Transactional(rollbackFor = Throwable.class)
-    public ResultVo<PsiTransferringOrderDTO> transferring(PsiTransferringOrderUpdateDTO psiTransferringOrderUpdateDTO) {
-        final PsiTransferringOrder psiTransferringOrder = this.getById(psiTransferringOrderUpdateDTO.getId());
+    public ResultVo transferring(PsiTransferringOrderUpdateDTO psiTransferringOrderUpdateDTO) {
+        /*final PsiTransferringOrder psiTransferringOrder = this.getById(psiTransferringOrderUpdateDTO.getId());
         if (psiTransferringOrder == null) {
             return ResultVoUtil.error("不存在调拨单");
         }
@@ -131,14 +132,14 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
         psiTransferringOrder.setUpdateBy(FndSecurityContextUtil.getContext().getId());
         psiTransferringOrder.setGmtModified(new Date());
         psiTransferringOrder.setRemarks(psiTransferringOrderUpdateDTO.getRemarks());
-        this.updateById(psiTransferringOrder);
+        this.updateById(psiTransferringOrder);*/
 
         //生成入库单
-        PsiStorageOrderDTO psiStorageOrderDTO = buildStorageOrderDTO(psiTransferringOrder, psiTransferringOrderUpdateDTO);
+        PsiStorageOrderDTO psiStorageOrderDTO = buildStorageOrderDTO(psiTransferringOrderUpdateDTO);
         log.info("生成入库单， psiStorageOrderDTO： {}", JSONUtil.toJsonStr(psiStorageOrderDTO));
         psiStorageOrderService.createStorageOrder(psiStorageOrderDTO);
 
-        return  resultUtils.returnSuccess(CopyBeanUtils.convert(psiTransferringOrder, PsiTransferringOrderDTO.class));
+        return  resultUtils.returnSuccess(psiStorageOrderDTO);
     }
 
     @Override
@@ -168,8 +169,8 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
     }
 
 
-    private PsiStorageOrderDTO buildStorageOrderDTO(PsiTransferringOrder psiTransferringOrder, PsiTransferringOrderUpdateDTO psiTransferringOrderUpdateDTO) {
-        PsiStorageOrderDTO psiStorageOrderDTO = new PsiStorageOrderDTO();
+    private PsiStorageOrderDTO buildStorageOrderDTO( PsiTransferringOrderUpdateDTO psiTransferringOrderUpdateDTO) {
+        /*PsiStorageOrderDTO psiStorageOrderDTO = new PsiStorageOrderDTO();
         psiStorageOrderDTO.setWarehouseId(psiTransferringOrderUpdateDTO.getTargetWarehouseId());
         psiStorageOrderDTO.setSourceId(psiTransferringOrder.getId());
         psiStorageOrderDTO.setSourceCode(psiTransferringOrder.getTransferCode());
@@ -181,7 +182,28 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
         psiStorageOrderDTO.setStorageStatus(StorageStatusEnum.ALL_WAREHOUSING.getCode());
         psiStorageOrderDTO.setBelongUserId(psiTransferringOrder.getBelongUserId());
         psiStorageOrderDTO.setCreateBy(psiTransferringOrder.getUpdateBy());
-        psiStorageOrderDTO.setUpdateBy(psiTransferringOrder.getUpdateBy());
+        psiStorageOrderDTO.setUpdateBy(psiTransferringOrder.getUpdateBy());*/
+
+
+        PsiUserDTO user = FndSecurityContextUtil.getContext().getPsiUserInfoDTO().getUser();
+
+        PsiProductSku psiProductSku = psiProductSkuService.getById(psiTransferringOrderUpdateDTO.getSkuId());
+
+        PsiStorageOrderDTO psiStorageOrderDTO = new PsiStorageOrderDTO();
+        psiStorageOrderDTO.setSourceWarehouseId(psiTransferringOrderUpdateDTO.getSourceWarehouseId());
+        psiStorageOrderDTO.setWarehouseId(psiTransferringOrderUpdateDTO.getTargetWarehouseId());
+        psiStorageOrderDTO.setSourceId(0L);
+        psiStorageOrderDTO.setSourceCode(null);
+        psiStorageOrderDTO.setSourceBusinessTime(new Date());
+        psiStorageOrderDTO.setProductSkuId(psiTransferringOrderUpdateDTO.getSkuId());
+        psiStorageOrderDTO.setProductSkuCode(psiProductSku.getSkuCode());
+        psiStorageOrderDTO.setProductCount(psiTransferringOrderUpdateDTO.getProductCount());
+        psiStorageOrderDTO.setReceivedCount(psiTransferringOrderUpdateDTO.getProductCount());
+        psiStorageOrderDTO.setStorageStatus(StorageStatusEnum.ALL_WAREHOUSING.getCode());
+        psiStorageOrderDTO.setAddType(psiTransferringOrderUpdateDTO.getAddType());
+        psiStorageOrderDTO.setBelongUserId(user.getBelongUserId());
+        psiStorageOrderDTO.setCreateBy(user.getId());
+        psiStorageOrderDTO.setUpdateBy(user.getId());
 
         return psiStorageOrderDTO;
     }

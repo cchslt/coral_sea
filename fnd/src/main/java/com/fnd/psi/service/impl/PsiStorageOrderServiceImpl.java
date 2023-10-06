@@ -54,14 +54,24 @@ public class PsiStorageOrderServiceImpl extends ServiceImpl<PsiStorageOrderMappe
 
         // 操作库存
         PsiInventoryDTO psiInventoryDTO = buildPsiInventoryDTO(psiStorageOrder);
-        psiInventoryService.addOrUpdate(psiInventoryDTO, psiStorageOrder.getStorageOrderCode());
+        //调拨先少调出仓，再增加调入仓
+        if (psiStorageOrder.getAddType().equals(1)) {
+            psiInventoryService.subOrUpdate(psiInventoryDTO, psiStorageOrder.getStorageOrderCode());
+
+            psiInventoryDTO.setWarehouseId(psiStorageOrder.getWarehouseId());
+            psiInventoryService.addOrUpdate(psiInventoryDTO, psiStorageOrder.getStorageOrderCode());
+        }
+        //销售直接减掉调出仓
+        if (psiStorageOrder.getAddType().equals(2)) {
+            psiInventoryService.subOrUpdate(psiInventoryDTO, psiStorageOrder.getStorageOrderCode());
+        }
 
         return psiStorageOrder;
     }
 
     private PsiInventoryDTO buildPsiInventoryDTO(PsiStorageOrder psiStorageOrder) {
         PsiInventoryDTO psiInventoryDTO = new PsiInventoryDTO();
-        psiInventoryDTO.setWarehouseId(psiStorageOrder.getWarehouseId());
+        psiInventoryDTO.setWarehouseId(psiStorageOrder.getSourceWarehouseId());
         psiInventoryDTO.setProductSkuId(psiStorageOrder.getProductSkuId());
         psiInventoryDTO.setProductSkuCode(psiStorageOrder.getProductSkuCode());
         psiInventoryDTO.setAvailableQuantity(psiStorageOrder.getProductCount());

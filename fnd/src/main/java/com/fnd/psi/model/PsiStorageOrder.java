@@ -3,6 +3,7 @@ package com.fnd.psi.model;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -57,9 +58,13 @@ public class PsiStorageOrder implements Serializable {
      */
     private Date sourceBusinessTime;
 
+    /**
+     * 调拨仓库
+     */
+    private Long sourceWarehouseId;
 
     /**
-     *  所在仓库id
+     * 目的仓库
      *
      */
     private Long warehouseId;
@@ -101,6 +106,10 @@ public class PsiStorageOrder implements Serializable {
      */
     private Long belongUserId;
 
+    /**
+     * 数据类型：1:调拨， 2: 销售
+     */
+    private Integer addType;
 
     /**
      *  单据备注
