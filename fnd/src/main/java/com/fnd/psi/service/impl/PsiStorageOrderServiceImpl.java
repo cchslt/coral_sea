@@ -14,10 +14,7 @@ import com.fnd.psi.model.PsiInventory;
 import com.fnd.psi.model.PsiProductSku;
 import com.fnd.psi.model.PsiStorageOrder;
 import com.fnd.psi.model.PsiUser;
-import com.fnd.psi.service.PsiInventoryService;
-import com.fnd.psi.service.PsiProductSkuService;
-import com.fnd.psi.service.PsiStorageOrderService;
-import com.fnd.psi.service.UserService;
+import com.fnd.psi.service.*;
 import com.fnd.psi.utils.CopyBeanUtils;
 import com.fnd.psi.utils.PSIBaseUtils;
 import com.fnd.psi.utils.PSICodeUtils;
@@ -44,6 +41,7 @@ public class PsiStorageOrderServiceImpl extends ServiceImpl<PsiStorageOrderMappe
     private PsiInventoryService psiInventoryService;
     private UserService userService;
     private PsiProductSkuService psiProductSkuService;
+    private WarehouseInfoService warehouseInfoService;
 
     @Override
     @Transactional(rollbackFor = Throwable.class)
@@ -125,21 +123,26 @@ public class PsiStorageOrderServiceImpl extends ServiceImpl<PsiStorageOrderMappe
         resultPage.setRecords(CopyBeanUtils.copyList(selectPage.getRecords(), PsiProductSkuTransferFlowVO.class));
         resultPage.setPages(selectPage.getPages());
 
-        Set<Long> userIds = CollUtil.newHashSet();
-        selectPage.getRecords().forEach(x -> userIds.add(x.getCreateBy()));
+        Map<Long, String> userMap = CollUtil.newHashMap();
+        Map<String, String> skuMap = CollUtil.newHashMap();
 
-        Map<Long, String> userMap = userService.queryByUserIds(userIds)
-                .stream().collect(Collectors.toMap(PsiUser::getId, PsiUser::getUserName));
+        if (CollUtil.isNotEmpty(resultPage.getRecords())) {
+            Set<Long> userIds = CollUtil.newHashSet();
+            selectPage.getRecords().forEach(x -> userIds.add(x.getCreateBy()));
 
-        Map<String, String> skuMap = psiProductSkuService.findBySkuCodeList(resultPage.getRecords().stream().map(PsiProductSkuTransferFlowVO::getSkuCode).collect(Collectors.toList()))
-                .stream().collect(Collectors.toMap(PsiProductSku::getSkuCode, PsiProductSku::getSkuProductName));
+            userMap = userService.queryByUserIds(userIds)
+                    .stream().collect(Collectors.toMap(PsiUser::getId, PsiUser::getUserName));
+            skuMap = psiProductSkuService.findBySkuCodeList(resultPage.getRecords().stream().map(PsiProductSkuTransferFlowVO::getSkuCode).collect(Collectors.toList()))
+                    .stream().collect(Collectors.toMap(PsiProductSku::getSkuCode, PsiProductSku::getSkuProductName));
 
-        resultPage.getRecords().forEach(x -> {
+        }
+
+        for(PsiProductSkuTransferFlowVO x : resultPage.getRecords()) {
             x.setCreateUserName(userMap.get(x.getCreateBy()));
-            x.setTargetWarehouseName("xxxx-d");
-            x.setSourceWarehouseName("xxxx-11");
+            x.setTargetWarehouseName(warehouseInfoService.getWarehouseNameById(x.getWarehouseId()));
+            x.setSourceWarehouseName(warehouseInfoService.getWarehouseNameById(x.getSourceWarehouseId()));
             x.setProductSkuName(skuMap.get(x.getSkuCode()));
-        });
+        }
         return resultPage;
     }
 }

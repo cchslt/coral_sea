@@ -41,9 +41,22 @@ public class PsiProductSkuTransferFlowVO {
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date gmtCreate;
 
+    /**
+     * 调拨仓库
+     */
+    private Long sourceWarehouseId;
+
+
 
     @ApiModelProperty("调出仓库")
     private String sourceWarehouseName;
+
+
+    /**
+     * 目的仓库
+     *
+     */
+    private Long warehouseId;
 
     @ApiModelProperty("调入仓库")
     private String targetWarehouseName;
