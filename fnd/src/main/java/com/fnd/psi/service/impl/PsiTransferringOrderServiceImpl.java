@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.sun.tools.doclint.Entity.psi;
 
 /**
  * @Author: chenchaohai
