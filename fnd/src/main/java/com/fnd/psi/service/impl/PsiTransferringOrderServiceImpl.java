@@ -48,6 +48,7 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
     private UserService userService;
     private WarehouseUserRelationService warehouseUserRelationService;
     private PsiProductSkuService psiProductSkuService;
+    private WarehouseInfoService warehouseInfoService;
 
     @Override
     public ResultVo<PageDTO<PsiTransferringOrderDTO>> listPage(PsiTransferringOrderQuery psiTransferringOrderQuery) {
@@ -90,9 +91,11 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
         Map<Long, String> userMap = userService.queryByUserIds(userIds)
                 .stream().collect(Collectors.toMap(PsiUser::getId, PsiUser::getUserName));
 
+
         resultPage.getRecords().forEach(x -> {
             x.setCreateByName(userMap.get(x.getCreateBy()));
             x.setUpdateByName(userMap.get(x.getUpdateBy()));
+            x.setSourceWarehouseName(warehouseInfoService.getWarehouseNameById(x.getSourceWarehouseId()));
         });
 
         return resultUtils.returnSuccess(resultPage);

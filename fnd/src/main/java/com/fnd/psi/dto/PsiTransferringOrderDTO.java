@@ -28,6 +28,9 @@ public class PsiTransferringOrderDTO  extends BaseDTO {
     @ApiModelProperty("调拨源仓库id")
     @NotNull(message = "调拨源仓库不能为空")
     private Long sourceWarehouseId;
+
+    @ApiModelProperty("调拨源仓库名称")
+    private String sourceWarehouseName;
 //    /**
 //     * 调拨目标仓库id
 //     */
