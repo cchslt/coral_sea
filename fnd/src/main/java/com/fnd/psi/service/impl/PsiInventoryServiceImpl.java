@@ -7,6 +7,7 @@ import com.fnd.psi.constant.InventoryChangeTypeEnum;
 import com.fnd.psi.dto.inventory.PsiInventoryDTO;
 import com.fnd.psi.dto.vo.PsiInventoryVo;
 import com.fnd.psi.dto.vo.PsiProductInventoryVO;
+import com.fnd.psi.exception.XXException;
 import com.fnd.psi.mapper.PsiInventoryMapper;
 import com.fnd.psi.model.InventoryChangeLog;
 import com.fnd.psi.model.PsiInventory;
@@ -61,6 +62,9 @@ public class PsiInventoryServiceImpl extends ServiceImpl<PsiInventoryMapper, Psi
     @Override
     public PsiInventory subOrUpdate(PsiInventoryDTO psiInventoryDTO, String changeCode) {
         PsiInventory psiInventory = findPsiInventoryBySkuAndWarehouseId(psiInventoryDTO.getProductSkuId(), psiInventoryDTO.getWarehouseId());
+        if (psiInventory == null) {
+            throw new XXException("调拨仓库中的商品没有库存！！");
+        }
 
         psiInventoryDTO.setId(psiInventory.getId());
         baseMapper.subUpdateInventory(psiInventoryDTO);
