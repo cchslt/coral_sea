@@ -16,6 +16,13 @@ public interface PsiStorageOrderService extends IService<PsiStorageOrder> {
     PsiStorageOrder createStorageOrder(PsiStorageOrderDTO psiStorageOrderDTO);
 
     /**
+     *
+     * @param psiStorageOrderDTO
+     * @return
+     */
+    PsiStorageOrder createStorageOrderForwarehouse(PsiStorageOrderDTO psiStorageOrderDTO);
+
+    /**
      * 调拨流水
      * @param psiProductSkuTransferFlowVO
      * @return

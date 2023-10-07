@@ -145,6 +145,16 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
     }
 
     @Override
+    public ResultVo<PsiTransferringOrderDTO> transferringForWarehouse(PsiTransferringOrderUpdateDTO psiTransferringOrderUpdateDTO) {
+        //生成入库单
+        PsiStorageOrderDTO psiStorageOrderDTO = buildStorageOrderDTO(psiTransferringOrderUpdateDTO);
+        log.info("生成入库单， psiStorageOrderDTO： {}", JSONUtil.toJsonStr(psiStorageOrderDTO));
+        psiStorageOrderService.createStorageOrderForwarehouse(psiStorageOrderDTO);
+
+        return  resultUtils.returnSuccess(psiStorageOrderDTO);
+    }
+
+    @Override
     @Transactional(rollbackFor = Throwable.class)
     public ResultVo<PsiTransferringOrderDTO> updateStatus(PsiTransferringOrderUpdateStatusDTO psiTransferringOrderUpdateStatusDTO) {
         final PsiTransferringOrder psiTransferringOrder = this.getById(psiTransferringOrderUpdateStatusDTO.getId());

@@ -59,6 +59,16 @@ public class PsiMakeProductOrderController {
         return psiTransferringOrderService.transferring(psiTransferringOrderUpdateDTO);
     }
 
+    /**
+     *
+     */
+    @ApiOperation("制作作品单-仓库调拨")
+    @RequestMapping(value = "/transferringForWarehouse", method = RequestMethod.POST)
+    @FndPreAuthorize
+    public ResultVo<PsiTransferringOrderDTO> transferringForWarehouse(@RequestBody @Validated PsiTransferringOrderUpdateDTO psiTransferringOrderUpdateDTO){
+        return psiTransferringOrderService.transferringForWarehouse(psiTransferringOrderUpdateDTO);
+    }
+
 
     @ApiOperation("制作作品信息-修改状态")
     @RequestMapping(value = "/updateStatus", method = RequestMethod.POST)

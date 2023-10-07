@@ -28,6 +28,13 @@ public interface PsiTransferringOrderService extends IService<PsiTransferringOrd
     ResultVo<PsiTransferringOrderDTO> transferring(PsiTransferringOrderUpdateDTO psiTransferringOrderUpdateDTO);
 
     /**
+     * 仓库调拨
+     * @param psiTransferringOrderUpdateDTO
+     * @return
+     */
+    ResultVo<PsiTransferringOrderDTO> transferringForWarehouse(PsiTransferringOrderUpdateDTO psiTransferringOrderUpdateDTO);
+
+    /**
      * 修改状态
      * @param psiTransferringOrderUpdateStatusDTO
      * @return
