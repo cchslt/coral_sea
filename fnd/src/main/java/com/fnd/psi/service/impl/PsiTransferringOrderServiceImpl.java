@@ -117,7 +117,7 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
     @Override
     @Transactional(rollbackFor = Throwable.class)
     public ResultVo transferring(PsiTransferringOrderUpdateDTO psiTransferringOrderUpdateDTO) {
-        /*final PsiTransferringOrder psiTransferringOrder = this.getById(psiTransferringOrderUpdateDTO.getId());
+        final PsiTransferringOrder psiTransferringOrder = this.getById(psiTransferringOrderUpdateDTO.getId());
         if (psiTransferringOrder == null) {
             return ResultVoUtil.error("不存在调拨单");
         }
@@ -134,7 +134,7 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
         psiTransferringOrder.setUpdateBy(FndSecurityContextUtil.getContext().getId());
         psiTransferringOrder.setGmtModified(new Date());
         psiTransferringOrder.setRemarks(psiTransferringOrderUpdateDTO.getRemarks());
-        this.updateById(psiTransferringOrder);*/
+        this.updateById(psiTransferringOrder);
 
         //生成入库单
         PsiStorageOrderDTO psiStorageOrderDTO = buildStorageOrderDTO(psiTransferringOrderUpdateDTO);

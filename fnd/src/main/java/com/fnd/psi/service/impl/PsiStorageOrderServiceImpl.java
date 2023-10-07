@@ -56,7 +56,7 @@ public class PsiStorageOrderServiceImpl extends ServiceImpl<PsiStorageOrderMappe
         PsiInventoryDTO psiInventoryDTO = buildPsiInventoryDTO(psiStorageOrder);
         //调拨先少调出仓，再增加调入仓
         if (psiStorageOrder.getAddType().equals(1)) {
-            psiInventoryService.subOrUpdate(psiInventoryDTO, psiStorageOrder.getStorageOrderCode());
+//            psiInventoryService.subOrUpdate(psiInventoryDTO, psiStorageOrder.getStorageOrderCode());
 
             psiInventoryDTO.setWarehouseId(psiStorageOrder.getWarehouseId());
             psiInventoryService.addOrUpdate(psiInventoryDTO, psiStorageOrder.getStorageOrderCode());
