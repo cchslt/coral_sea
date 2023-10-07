@@ -26,6 +26,6 @@ public class PsiProductSkuVO extends BasePageQuery {
     @ApiModelProperty("sku商品称")
     private String skuProductName;
 
-
-
+    @ApiModelProperty("仓库id")
+    private Long warehouseId;
 }

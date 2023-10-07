@@ -14,7 +14,9 @@ import com.fnd.psi.dto.product.PsiProductSkuDTO;
 import com.fnd.psi.dto.user.PsiUserDTO;
 import com.fnd.psi.dto.vo.PsiProductSkuVO;
 import com.fnd.psi.exception.XXException;
+import com.fnd.psi.mapper.PsiInventoryMapper;
 import com.fnd.psi.mapper.PsiProductSkuMapper;
+import com.fnd.psi.model.PsiInventory;
 import com.fnd.psi.model.PsiProductSku;
 import com.fnd.psi.model.PsiUser;
 import com.fnd.psi.security.FndSecurityContextUtil;
@@ -44,6 +46,7 @@ public class PsiProductSkuServiceImpl extends ServiceImpl<PsiProductSkuMapper, P
 
     private ResultUtils resultUtils;
     private UserService userService;
+    private PsiInventoryMapper psiInventoryMapper;
 
     @Override
     @Transactional(rollbackFor = Throwable.class)
@@ -162,18 +165,34 @@ public class PsiProductSkuServiceImpl extends ServiceImpl<PsiProductSkuMapper, P
         resultPage.setPages(selectPage.getPages());
 
         Set<Long> userIds = CollUtil.newHashSet();
+        Set<Long> skuIds = CollUtil.newHashSet();
         selectPage.getRecords().forEach(x -> {
             userIds.add(x.getCreateUserId());
             userIds.add(x.getModifyUserId());
+
+            skuIds.add(x.getId());
         });
 
         Map<Long, String> userMap = userService.queryByUserIds(userIds)
                 .stream().collect(Collectors.toMap(PsiUser::getId, PsiUser::getUserName));
 
-        resultPage.getRecords().forEach(x -> {
+        //先这样吧
+        Map<Long, Integer> skuInventoryMap = CollUtil.newHashMap();
+        if (productSkuVO.getWarehouseId() != null) {
+            LambdaQueryWrapper<PsiInventory> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.eq(PsiInventory::getWarehouseId, productSkuVO.getWarehouseId());
+            lambdaQueryWrapper.in(PsiInventory::getProductSkuId, skuIds);
+            lambdaQueryWrapper.eq(PsiInventory::getIsDeleted, 0);
+
+            skuInventoryMap = psiInventoryMapper.selectList(lambdaQueryWrapper)
+                    .stream().collect(Collectors.toMap(PsiInventory::getProductSkuId, PsiInventory::getSellableQuantity));
+        }
+
+        for(PsiProductSkuDTO x : resultPage.getRecords()){
             x.setCreateUserName(userMap.get(x.getCreateUserId()));
             x.setModifyUserName(userMap.get(x.getModifyUserId()));
-        });
+            x.setSellableQuantity(skuInventoryMap.get(x.getId()));
+        }
         return resultPage;
     }
 

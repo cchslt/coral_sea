@@ -44,5 +44,10 @@ public class PsiProductSkuDTO extends BaseDTO {
     @ApiModelProperty("修改username")
     private String modifyUserName;
 
-
+    /**
+     *  可售库存(可用库存 - 占用库存)
+     *
+     */
+    @ApiModelProperty("可售库存")
+    private Integer sellableQuantity;
 }
