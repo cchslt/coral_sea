@@ -157,6 +157,7 @@ public class PsiProductSkuServiceImpl extends ServiceImpl<PsiProductSkuMapper, P
         queryWrapper.like(StrUtil.isNotBlank(productSkuVO.getSkuCode()), PsiProductSku::getSkuCode, productSkuVO.getSkuCode());
         queryWrapper.like(StrUtil.isNotBlank(productSkuVO.getSkuProductName()), PsiProductSku::getSkuProductName, productSkuVO.getSkuProductName());
         queryWrapper.eq(PsiProductSku::getIsDeleted, 0);
+        queryWrapper.orderByDesc(PsiProductSku::getGmtCreate);
 
         Page<PsiProductSku> selectPage = baseMapper.selectPage(page, queryWrapper);
 

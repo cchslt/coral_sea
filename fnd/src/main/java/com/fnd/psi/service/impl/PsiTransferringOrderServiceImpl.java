@@ -66,6 +66,7 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
         queryWrapper.eq(ObjectUtil.isNotNull(psiTransferringOrderQuery.getWarehouseId()), PsiTransferringOrder::getSourceWarehouseId, psiTransferringOrderQuery.getWarehouseId());
         queryWrapper.eq(ObjectUtil.isNotNull(psiTransferringOrderQuery.getProductSkuId()), PsiTransferringOrder::getProductSkuId, psiTransferringOrderQuery.getProductSkuId());
         queryWrapper.eq(PsiTransferringOrder::getIsDeleted, 0);
+        queryWrapper.orderByDesc(PsiTransferringOrder::getGmtCreate);
 
         List<Long> warehouseIdList = CollUtil.newArrayList();
         if (!user.getLevel().equals(0)) {

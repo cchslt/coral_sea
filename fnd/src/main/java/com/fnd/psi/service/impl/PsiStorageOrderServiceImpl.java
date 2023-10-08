@@ -134,6 +134,7 @@ public class PsiStorageOrderServiceImpl extends ServiceImpl<PsiStorageOrderMappe
                             .or().like(PsiStorageOrder::getWarehouseId, warehouseIdList)
             );
         }
+        queryWrapper.orderByDesc(PsiStorageOrder::getGmtCreate);
 
         Page<PsiStorageOrder> selectPage = baseMapper.selectPage(page, queryWrapper);
 
