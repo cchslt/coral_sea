@@ -68,4 +68,9 @@ public class PsiProductSkuTransferFlowVO {
 
     @ApiModelProperty("备注")
     private String remarks;
+
+    /**
+     * 数据类型：1:调拨， 2: 销售
+     */
+    private Integer addType;
 }
