@@ -66,6 +66,6 @@ public interface PsiProductSkuService extends IService<PsiProductSku> {
      * @param skuIdList
      * @return
      */
-    List<PsiProductSku> findBySkuIdList(List<String> skuIdList);
+    List<PsiProductSku> findBySkuIdList(List<Long> skuIdList);
 
 }

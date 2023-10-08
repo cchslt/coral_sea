@@ -207,7 +207,7 @@ public class PsiProductSkuServiceImpl extends ServiceImpl<PsiProductSkuMapper, P
 
 
     @Override
-    public List<PsiProductSku> findBySkuIdList(List<String> skuIdList) {
+    public List<PsiProductSku> findBySkuIdList(List<Long> skuIdList) {
         LambdaQueryWrapper<PsiProductSku> lambdaQueryWrapper = new LambdaQueryWrapper();
         lambdaQueryWrapper.in(PsiProductSku::getId, skuIdList);
         lambdaQueryWrapper.eq(PsiProductSku::getIsDeleted, 0);

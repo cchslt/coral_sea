@@ -151,7 +151,7 @@ public class PsiStorageOrderServiceImpl extends ServiceImpl<PsiStorageOrderMappe
             userMap = userService.queryByUserIds(userIds)
                     .stream().collect(Collectors.toMap(PsiUser::getId, PsiUser::getUserName));
             skuMap = psiProductSkuService.findBySkuIdList(resultPage.getRecords().stream().map(PsiProductSkuTransferFlowVO::getProductSkuId).collect(Collectors.toList()))
-                    .stream().collect(Collectors.toMap(PsiProductSku::getSkuCode, PsiProductSku::getSkuProductName));
+                    .stream().collect(Collectors.toMap(PsiProductSku::getId, PsiProductSku::getSkuProductName));
 
         }
 
