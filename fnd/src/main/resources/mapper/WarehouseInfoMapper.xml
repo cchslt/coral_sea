@@ -65,9 +65,8 @@
         <if test="countryId!=null">
             and w.country_id = #{countryId}
         </if>
-        <if test="ew!=null and ew.keyword!=null and ew.keyword!='' ">
-            and (w.warehouse_code like CONCAT('%', #{ew.keyword} ,'%') or
-                 w.warehouse_name like CONCAT('%', #{ew.keyword} ,'%'))
+        <if test="ew!=null and ew.warehouseName!=null and ew.warehouseName!='' ">
+            and w.warehouse_name like CONCAT('%', #{ew.warehouseName} ,'%')
         </if>
         order by w.gmt_create desc
     </select>

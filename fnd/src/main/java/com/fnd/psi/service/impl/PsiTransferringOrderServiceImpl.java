@@ -59,6 +59,7 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
 
         LambdaQueryWrapper<PsiTransferringOrder> queryWrapper = new LambdaQueryWrapper();
         queryWrapper.like(StrUtil.isNotBlank(psiTransferringOrderQuery.getTransferCode()), PsiTransferringOrder::getTransferCode, psiTransferringOrderQuery.getTransferCode());
+        queryWrapper.like(StrUtil.isNotBlank(psiTransferringOrderQuery.getProductSkuCode()), PsiTransferringOrder::getProductSkuCode, psiTransferringOrderQuery.getProductSkuCode());
         queryWrapper.like(StrUtil.isNotBlank(psiTransferringOrderQuery.getProductSkuName()), PsiTransferringOrder::getProductSkuName, psiTransferringOrderQuery.getProductSkuName());
         queryWrapper.eq(ObjectUtil.isNotNull(psiTransferringOrderQuery.getTransferringStatus()), PsiTransferringOrder::getTransferringStatus, psiTransferringOrderQuery.getTransferringStatus());
         queryWrapper.eq(ObjectUtil.isNotNull(psiTransferringOrderQuery.getRelationStorageStatus()), PsiTransferringOrder::getRelationStorageStatus, psiTransferringOrderQuery.getRelationStorageStatus());

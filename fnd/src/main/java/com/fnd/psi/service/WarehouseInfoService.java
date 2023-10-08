@@ -5,6 +5,7 @@ import com.fnd.psi.dto.BasePageQuery;
 import com.fnd.psi.dto.PageDTO;
 import com.fnd.psi.dto.ResultVo;
 import com.fnd.psi.dto.vo.BaseDictionariesVO;
+import com.fnd.psi.dto.vo.PsiWarehouseRequestVO;
 import com.fnd.psi.dto.vo.WarehouseInfoVO;
 import com.fnd.psi.dto.vo.WarehouseRelationUserInfoDTO;
 import com.fnd.psi.model.WarehouseInfo;
@@ -31,7 +32,7 @@ public interface WarehouseInfoService extends IService<WarehouseInfo>{
      * @param basePageQuery
      * @return
      */
-    ResultVo<PageDTO<WarehouseInfoVO>> selectPage(BasePageQuery basePageQuery);
+    ResultVo<PageDTO<WarehouseInfoVO>> selectPage(PsiWarehouseRequestVO basePageQuery);
 
     /**
      * 新增仓库

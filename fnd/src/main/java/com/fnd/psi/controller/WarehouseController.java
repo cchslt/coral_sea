@@ -5,6 +5,7 @@ import com.fnd.psi.dto.PageDTO;
 import com.fnd.psi.dto.ResultVo;
 import com.fnd.psi.dto.product.PsiProductSkuDTO;
 import com.fnd.psi.dto.vo.BaseDictionariesVO;
+import com.fnd.psi.dto.vo.PsiWarehouseRequestVO;
 import com.fnd.psi.dto.vo.WarehouseInfoVO;
 import com.fnd.psi.security.FndPreAuthorize;
 import com.fnd.psi.service.WarehouseInfoService;
@@ -33,7 +34,7 @@ public class WarehouseController {
     @ApiOperation(value = "仓库管理页面select page", httpMethod = "POST")
     @FndPreAuthorize
     @PostMapping(value = "/selectPage")
-    public ResultVo<PageDTO<WarehouseInfoVO>> selectPage(@RequestBody BasePageQuery basePageQuery) {
+    public ResultVo<PageDTO<WarehouseInfoVO>> selectPage(@RequestBody PsiWarehouseRequestVO basePageQuery) {
         return warehouseInfoService.selectPage(basePageQuery);
     }
 

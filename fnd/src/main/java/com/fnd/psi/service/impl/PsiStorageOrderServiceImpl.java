@@ -4,25 +4,27 @@ import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fnd.psi.constant.UserTypeEnum;
 import com.fnd.psi.dto.PageDTO;
 import com.fnd.psi.dto.inventory.PsiInventoryDTO;
 import com.fnd.psi.dto.storage.PsiStorageOrderDTO;
+import com.fnd.psi.dto.user.PsiUserDTO;
 import com.fnd.psi.dto.vo.PsiProductSkuTransferFlowRequestVO;
 import com.fnd.psi.dto.vo.PsiProductSkuTransferFlowVO;
 import com.fnd.psi.mapper.PsiStorageOrderMapper;
-import com.fnd.psi.model.PsiInventory;
-import com.fnd.psi.model.PsiProductSku;
-import com.fnd.psi.model.PsiStorageOrder;
-import com.fnd.psi.model.PsiUser;
+import com.fnd.psi.model.*;
+import com.fnd.psi.security.FndSecurityContextUtil;
 import com.fnd.psi.service.*;
 import com.fnd.psi.utils.CopyBeanUtils;
 import com.fnd.psi.utils.PSIBaseUtils;
 import com.fnd.psi.utils.PSICodeUtils;
+import com.google.common.collect.Sets;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -42,6 +44,7 @@ public class PsiStorageOrderServiceImpl extends ServiceImpl<PsiStorageOrderMappe
     private UserService userService;
     private PsiProductSkuService psiProductSkuService;
     private WarehouseInfoService warehouseInfoService;
+    private WarehouseUserRelationService warehouseUserRelationService;
 
     @Override
     @Transactional(rollbackFor = Throwable.class)
@@ -111,15 +114,30 @@ public class PsiStorageOrderServiceImpl extends ServiceImpl<PsiStorageOrderMappe
 
     @Override
     public PageDTO<PsiProductSkuTransferFlowVO> transferringFlow(PsiProductSkuTransferFlowRequestVO psiProductSkuTransferFlowVO) {
+        PageDTO<PsiProductSkuTransferFlowVO> resultPage= CopyBeanUtils.convert(psiProductSkuTransferFlowVO, PageDTO.class);
+
         Page<PsiStorageOrder> page = PSIBaseUtils.buildPageByQuery(psiProductSkuTransferFlowVO);
 
         LambdaQueryWrapper<PsiStorageOrder> queryWrapper = new LambdaQueryWrapper();
         queryWrapper.eq(PsiStorageOrder::getProductSkuCode, psiProductSkuTransferFlowVO.getSkuCode());
         queryWrapper.eq(PsiStorageOrder::getIsDeleted, 0);
 
+        final PsiUserDTO currentUser = FndSecurityContextUtil.getContext().getPsiUserInfoDTO().getUser();
+        if (!UserTypeEnum.PLATFORM_MANAGEMENT.getCode().equals(currentUser.getUserType())) {
+            List<WarehouseUserRelation> warehouseIdByUserIds = warehouseUserRelationService.getWarehouseIdByUserIds(Sets.newHashSet(currentUser.getId()));
+            List<Long> warehouseIdList = warehouseIdByUserIds.stream().map(WarehouseUserRelation::getWarehouseId).collect(Collectors.toList());
+            if (CollUtil.isEmpty(warehouseIdList)) {
+                return resultPage;
+            }
+            queryWrapper.and(item ->
+                    item.in(PsiStorageOrder::getSourceWarehouseId, warehouseIdList)
+                            .or().like(PsiStorageOrder::getWarehouseId, warehouseIdList)
+            );
+        }
+
         Page<PsiStorageOrder> selectPage = baseMapper.selectPage(page, queryWrapper);
 
-        PageDTO<PsiProductSkuTransferFlowVO> resultPage= CopyBeanUtils.convert(selectPage, PageDTO.class);
+        resultPage= CopyBeanUtils.convert(selectPage, PageDTO.class);
         resultPage.setRecords(CopyBeanUtils.copyList(selectPage.getRecords(), PsiProductSkuTransferFlowVO.class));
         resultPage.setPages(selectPage.getPages());
 

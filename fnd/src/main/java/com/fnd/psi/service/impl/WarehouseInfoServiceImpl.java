@@ -15,10 +15,7 @@ import com.fnd.psi.dto.BasePageQuery;
 import com.fnd.psi.dto.PageDTO;
 import com.fnd.psi.dto.ResultVo;
 import com.fnd.psi.dto.user.PsiUserDTO;
-import com.fnd.psi.dto.vo.BaseDictionariesVO;
-import com.fnd.psi.dto.vo.WarehouseInfoVO;
-import com.fnd.psi.dto.vo.WarehousePriorityVO;
-import com.fnd.psi.dto.vo.WarehouseRelationUserInfoDTO;
+import com.fnd.psi.dto.vo.*;
 import com.fnd.psi.mapper.WarehouseInfoMapper;
 import com.fnd.psi.mapper.WarehouseShippingRegionRelationMapper;
 import com.fnd.psi.model.*;
@@ -100,7 +97,7 @@ public class WarehouseInfoServiceImpl extends ServiceImpl<WarehouseInfoMapper, W
     }
 
     @Override
-    public ResultVo<PageDTO<WarehouseInfoVO>> selectPage(BasePageQuery basePageQuery) {
+    public ResultVo<PageDTO<WarehouseInfoVO>> selectPage(PsiWarehouseRequestVO basePageQuery) {
         PageDTO<WarehouseInfoVO> warehouseInfoVOPageDTO = new PageDTO<>();
         if (ObjectUtil.isNotNull(basePageQuery)) {
             final PsiUserDTO currentUser = FndSecurityContextUtil.getContext().getPsiUserInfoDTO().getUser();

@@ -18,9 +18,9 @@ import com.fnd.psi.service.RoleService;
 import com.fnd.psi.utils.ResultVoUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -33,18 +33,12 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service("roleService")
+@AllArgsConstructor
 public class RoleServiceImpl extends ServiceImpl<RoleMapper, PsiRole> implements RoleService {
 
-    @Autowired
     private RoleMapper roleMapper;
-
-    @Autowired
     private PermissionService permissionService;
-
-    @Autowired
     private PermissionMapper permissionMapper;
-
-    @Autowired
     private RolePermissionService rolePermissionService;
 
 

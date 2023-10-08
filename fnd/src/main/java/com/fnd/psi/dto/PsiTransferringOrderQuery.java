@@ -23,6 +23,9 @@ public class PsiTransferringOrderQuery extends BasePageQuery {
     @ApiModelProperty("skuid")
     private Long productSkuId;
 
+    @ApiModelProperty("skuCode")
+    private String productSkuCode;
+
     @ApiModelProperty("产品名称")
     private String productSkuName;
 

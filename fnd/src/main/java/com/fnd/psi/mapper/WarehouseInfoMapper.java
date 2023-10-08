@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fnd.psi.dto.BasePageQuery;
+import com.fnd.psi.dto.vo.PsiWarehouseRequestVO;
 import com.fnd.psi.dto.vo.WarehouseRelationUserInfoDTO;
 import com.fnd.psi.model.WarehouseInfo;
 import org.apache.ibatis.annotations.Param;
@@ -20,7 +21,7 @@ public interface WarehouseInfoMapper extends BaseMapper<WarehouseInfo> {
 
 
     IPage<WarehouseInfo> selectWarehouseInfoPage(Page page,
-                                                 @Param("ew") BasePageQuery basePageQuery,
+                                                 @Param("ew") PsiWarehouseRequestVO basePageQuery,
                                                  @Param("userId") Long userId,
                                                  @Param("countryId") Long countryId);
 
