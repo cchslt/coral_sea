@@ -160,7 +160,7 @@ public class PsiStorageOrderServiceImpl extends ServiceImpl<PsiStorageOrderMappe
             x.setCreateUserName(userMap.get(x.getCreateBy()));
             x.setTargetWarehouseName(warehouseInfoService.getWarehouseNameById(x.getWarehouseId()));
             x.setSourceWarehouseName(warehouseInfoService.getWarehouseNameById(x.getSourceWarehouseId()));
-            x.setProductSkuName(skuMap.get(x.getSkuCode()));
+            x.setProductSkuName(skuMap.get(x.getProductSkuId()));
         }
         return resultPage;
     }
