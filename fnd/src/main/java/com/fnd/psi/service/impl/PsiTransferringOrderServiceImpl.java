@@ -216,6 +216,7 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
         psiStorageOrderDTO.setStorageStatus(StorageStatusEnum.ALL_WAREHOUSING.getCode());
         psiStorageOrderDTO.setAddType(psiTransferringOrderUpdateDTO.getAddType());
         psiStorageOrderDTO.setBelongUserId(user.getBelongUserId());
+        psiStorageOrderDTO.setRemarks(psiTransferringOrderUpdateDTO.getRemarks());
         psiStorageOrderDTO.setCreateBy(user.getId());
         psiStorageOrderDTO.setUpdateBy(user.getId());
 
