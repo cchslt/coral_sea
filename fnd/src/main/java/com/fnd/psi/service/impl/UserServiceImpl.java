@@ -271,10 +271,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, PsiUser> implements
         addPsiUser.setBelongUserId(belongUserId);
         addPsiUser.setGmtCreate(date);
         addPsiUser.setUserStatus(userDTO.getIsFrozen());
-        addPsiUser.setLevel(1);
+        addPsiUser.setLevel(IntegerUtils.add(userLogin.getLevel(), 1));
         addPsiUser.setCountryId(userLogin.getCountryId());
         addPsiUser.setCountryCode(userLogin.getCountryCode());
-        addPsiUser.setUserType(userLogin.getUserType());
+        addPsiUser.setUserType(1L); //默认不是平台管理员
         addPsiUser.setIsDeleted(false);
         addPsiUser.setPassword(encode.encode(userDTO.getPassword()));
         addPsiUser.setCreateUserId(userLogin.getId());
