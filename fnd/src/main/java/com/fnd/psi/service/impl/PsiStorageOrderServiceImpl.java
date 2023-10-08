@@ -142,7 +142,7 @@ public class PsiStorageOrderServiceImpl extends ServiceImpl<PsiStorageOrderMappe
         resultPage.setPages(selectPage.getPages());
 
         Map<Long, String> userMap = CollUtil.newHashMap();
-        Map<String, String> skuMap = CollUtil.newHashMap();
+        Map<Long, String> skuMap = CollUtil.newHashMap();
 
         if (CollUtil.isNotEmpty(resultPage.getRecords())) {
             Set<Long> userIds = CollUtil.newHashSet();
@@ -150,12 +150,13 @@ public class PsiStorageOrderServiceImpl extends ServiceImpl<PsiStorageOrderMappe
 
             userMap = userService.queryByUserIds(userIds)
                     .stream().collect(Collectors.toMap(PsiUser::getId, PsiUser::getUserName));
-            skuMap = psiProductSkuService.findBySkuCodeList(resultPage.getRecords().stream().map(PsiProductSkuTransferFlowVO::getSkuCode).collect(Collectors.toList()))
+            skuMap = psiProductSkuService.findBySkuIdList(resultPage.getRecords().stream().map(PsiProductSkuTransferFlowVO::getProductSkuId).collect(Collectors.toList()))
                     .stream().collect(Collectors.toMap(PsiProductSku::getSkuCode, PsiProductSku::getSkuProductName));
 
         }
 
         for(PsiProductSkuTransferFlowVO x : resultPage.getRecords()) {
+            x.setTransferDate(x.getGmtCreate());
             x.setCreateUserName(userMap.get(x.getCreateBy()));
             x.setTargetWarehouseName(warehouseInfoService.getWarehouseNameById(x.getWarehouseId()));
             x.setSourceWarehouseName(warehouseInfoService.getWarehouseNameById(x.getSourceWarehouseId()));

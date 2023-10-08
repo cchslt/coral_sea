@@ -18,6 +18,7 @@ import java.util.Date;
 @Data
 public class PsiProductSkuTransferFlowVO {
 
+    private Long productSkuId;
     /**
      * sku编码
      */

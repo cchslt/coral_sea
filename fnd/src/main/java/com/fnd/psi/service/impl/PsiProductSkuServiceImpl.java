@@ -206,4 +206,14 @@ public class PsiProductSkuServiceImpl extends ServiceImpl<PsiProductSkuMapper, P
     }
 
 
+    @Override
+    public List<PsiProductSku> findBySkuIdList(List<String> skuIdList) {
+        LambdaQueryWrapper<PsiProductSku> lambdaQueryWrapper = new LambdaQueryWrapper();
+        lambdaQueryWrapper.in(PsiProductSku::getId, skuIdList);
+        lambdaQueryWrapper.eq(PsiProductSku::getIsDeleted, 0);
+
+        return Optional.ofNullable(list(lambdaQueryWrapper)).orElse(CollUtil.newArrayList());
+    }
+
+
 }
