@@ -12,6 +12,7 @@ import com.fnd.psi.model.PsiTransferringOrderStatus;
 import com.fnd.psi.service.PsiTransferringOrderStatusService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.function.Function;
@@ -29,6 +30,7 @@ public class PsiTransferringOrderStatusServiceImpl extends ServiceImpl<PsiTransf
 
 
     @Override
+    @Transactional(rollbackFor = Throwable.class)
     public List<PsiTransferringOrderStatus> handleTransferringOrderStatus(PsiTransferringOrderUpdateStatusDTO psiTransferringOrderUpdateStatusDTO) {
         LambdaQueryWrapper<PsiTransferringOrderStatus> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(PsiTransferringOrderStatus::getTransferringOrderId, psiTransferringOrderUpdateStatusDTO.getId());
@@ -89,6 +91,7 @@ public class PsiTransferringOrderStatusServiceImpl extends ServiceImpl<PsiTransf
     }
 
     @Override
+    @Transactional(rollbackFor = Throwable.class)
     public List<PsiTransferringOrderStatus> saveTransferringOrderStatus(PsiTransferringOrder psiTransferringOrder) {
         List<PsiTransferringOrderStatus> psiTransferringOrderStatusList = new ArrayList<>();
         for (TransferChangeEnum transferChangeEnum : TransferChangeEnum.values()) {
