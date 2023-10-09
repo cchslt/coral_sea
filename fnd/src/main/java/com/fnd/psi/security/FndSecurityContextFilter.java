@@ -40,7 +40,14 @@ public class FndSecurityContextFilter extends GenericFilterBean {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         try {
-            String authHeaderValue = TokenUtil.verify(httpServletRequest);
+            String authHeaderValue = null;
+            try {
+                authHeaderValue = TokenUtil.verify(httpServletRequest);
+            } catch (Exception e) {
+                log.error("token错误或者已过期, error: ", e);
+                resolver.resolveException(httpServletRequest, httpServletResponse, null, new XXException(ErrorCodeConstants.TOKEN_IS_ERROR));
+                return;
+            }
             if (ObjectUtil.isEmpty(authHeaderValue)) {
                 //注意，不一定有token存在， 直接放行
                 chain.doFilter(request, response);
@@ -58,11 +65,7 @@ public class FndSecurityContextFilter extends GenericFilterBean {
 
             chain.doFilter(request, response);
 
-        } catch (Exception e) {
-            log.error("token错误或者已过期, error: ", e);
-            resolver.resolveException(httpServletRequest, httpServletResponse, null, new XXException(ErrorCodeConstants.TOKEN_IS_ERROR));
-        }
-        finally {
+        } finally {
             FndSecurityContextUtil.clearContext();
         }
 
