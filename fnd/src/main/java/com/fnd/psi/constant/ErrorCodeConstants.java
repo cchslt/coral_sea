@@ -56,6 +56,10 @@ public interface ErrorCodeConstants {
      */
     String INCONSISTENT_PASSWORD_INPUT = "1610000007";
 
+    /**
+     * token过期或不正确
+     */
+    String TOKEN_IS_ERROR = "161000011";
 
 
 
