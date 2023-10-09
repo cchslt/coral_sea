@@ -96,6 +96,7 @@ public class PsiTransferringOrderStatusServiceImpl extends ServiceImpl<PsiTransf
         List<PsiTransferringOrderStatus> psiTransferringOrderStatusList = new ArrayList<>();
         for (TransferChangeEnum transferChangeEnum : TransferChangeEnum.values()) {
             PsiTransferringOrderStatus psiTransferringOrderStatus = new PsiTransferringOrderStatus();
+            psiTransferringOrderStatus.setTransferringOrderId(psiTransferringOrder.getId());
             psiTransferringOrderStatus.setTransferringStatus(transferChangeEnum.getCode());
             psiTransferringOrderStatus.setProductCount(0);
             if (transferChangeEnum.getCode().equals(TransferChangeEnum.INKJET_PRINTING.getCode())) {
