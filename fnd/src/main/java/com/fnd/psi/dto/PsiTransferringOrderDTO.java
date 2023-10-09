@@ -6,6 +6,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * @Author: chenchaohai
@@ -76,6 +77,11 @@ public class PsiTransferringOrderDTO  extends BaseDTO {
      */
     @ApiModelProperty("调拨单状态")
     private Integer transferringStatus;
+
+
+    @ApiModelProperty("调拨单状态列表")
+    private List<PsiTransferringOrderUpdateStatusDetailDTO> transferringStatusList;
+
     /**
      * 入库状态，1未入库、2部分入库、3全部入库、0已经关闭
      */

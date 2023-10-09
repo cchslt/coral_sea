@@ -49,6 +49,7 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
     private WarehouseUserRelationService warehouseUserRelationService;
     private PsiProductSkuService psiProductSkuService;
     private WarehouseInfoService warehouseInfoService;
+    private PsiTransferringOrderStatusService psiTransferringOrderStatusService;
 
     @Override
     public ResultVo<PageDTO<PsiTransferringOrderDTO>> listPage(PsiTransferringOrderQuery psiTransferringOrderQuery) {
@@ -85,19 +86,24 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
         resultPage.setPages(selectPage.getPages());
 
         Set<Long> userIds = CollUtil.newHashSet();
+        Set<Long> ids = CollUtil.newHashSet();
         resultPage.getRecords().forEach(x -> {
             userIds.add(x.getCreateBy());
             userIds.add(x.getUpdateBy());
+            ids.add(x.getId());
         });
 
         Map<Long, String> userMap = userService.queryByUserIds(userIds)
                 .stream().collect(Collectors.toMap(PsiUser::getId, PsiUser::getUserName));
 
+        Map<Long, List<PsiTransferringOrderUpdateStatusDetailDTO>> transferringOrderUpdateStatusMap = psiTransferringOrderStatusService.queryByTransferringId(ids)
+                .stream().collect(Collectors.groupingBy(PsiTransferringOrderUpdateStatusDetailDTO::getTransferringOrderId));
 
         resultPage.getRecords().forEach(x -> {
             x.setCreateByName(userMap.get(x.getCreateBy()));
             x.setUpdateByName(userMap.get(x.getUpdateBy()));
             x.setSourceWarehouseName(warehouseInfoService.getWarehouseNameById(x.getSourceWarehouseId()));
+            x.setTransferringStatusList(transferringOrderUpdateStatusMap.get(x.getId()));
         });
 
         return resultUtils.returnSuccess(resultPage);
@@ -112,6 +118,8 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
         PsiTransferringOrder psiTransferringOrder = CopyBeanUtils.convert(psiTransferringOrderDTO, PsiTransferringOrder.class);
         psiTransferringOrder.setTransferCode(PSICodeUtils.getTransferringOrderCode());
         this.save(psiTransferringOrder);
+
+        psiTransferringOrderStatusService.saveTransferringOrderStatus(psiTransferringOrder);
 
         return resultUtils.returnSuccess(psiTransferringOrder);
     }
@@ -164,11 +172,15 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
             return ResultVoUtil.error("不存在调拨单");
         }
 
-        psiTransferringOrder.setTransferringStatus(psiTransferringOrderUpdateStatusDTO.getTransferringStatus());
+//        psiTransferringOrder.setTransferringStatus(psiTransferringOrderUpdateStatusDTO.getTransferringStatus());
         psiTransferringOrder.setRemarks(psiTransferringOrderUpdateStatusDTO.getRemarks());
         psiTransferringOrder.setUpdateBy(FndSecurityContextUtil.getContext().getId());
 
         this.updateById(psiTransferringOrder);
+
+        //流程处理
+        psiTransferringOrderUpdateStatusDTO.setUpdateBy(psiTransferringOrder.getUpdateBy());
+        psiTransferringOrderStatusService.handleTransferringOrderStatus(psiTransferringOrderUpdateStatusDTO);
 
         return resultUtils.returnSuccess(CopyBeanUtils.convert(psiTransferringOrder, PsiTransferringOrderDTO.class));
     }

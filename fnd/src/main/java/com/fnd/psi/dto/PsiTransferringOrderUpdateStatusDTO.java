@@ -3,7 +3,10 @@ package com.fnd.psi.dto;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 
 /**
@@ -23,13 +26,15 @@ public class PsiTransferringOrderUpdateStatusDTO extends BaseDTO {
     private Long id;
 
 
-    /**
-     * 调拨单状态
-     */
-    @ApiModelProperty("调拨单状态")
-    @NotNull(message = "调拨单状态不能为空")
-    private Integer transferringStatus;
+    @ApiModelProperty("调拨单状态列表")
+    @NotEmpty(message = "调拨单状态列表不能为空")
+    @Valid
+    private List<PsiTransferringOrderUpdateStatusDetailDTO> transferringStatusList;
 
+    /**
+     *  最后修改人
+     */
+    private Long updateBy;
 
     /**
      * 备注
