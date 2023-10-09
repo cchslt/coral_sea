@@ -99,7 +99,7 @@ public class PsiTransferringOrderStatusServiceImpl extends ServiceImpl<PsiTransf
             psiTransferringOrderStatus.setTransferringOrderId(psiTransferringOrder.getId());
             psiTransferringOrderStatus.setTransferringStatus(transferChangeEnum.getCode());
             psiTransferringOrderStatus.setProductCount(0);
-            if (transferChangeEnum.getCode().equals(TransferChangeEnum.INKJET_PRINTING.getCode())) {
+            if (transferChangeEnum.getCode().equals(psiTransferringOrder.getTransferringStatus())) {
                 psiTransferringOrderStatus.setProductCount(psiTransferringOrder.getProductCount());
             }
             psiTransferringOrderStatus.setCreateBy(psiTransferringOrder.getCreateBy());
