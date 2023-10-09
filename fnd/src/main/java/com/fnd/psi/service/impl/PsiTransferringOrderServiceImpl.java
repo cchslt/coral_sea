@@ -175,6 +175,7 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
 //        psiTransferringOrder.setTransferringStatus(psiTransferringOrderUpdateStatusDTO.getTransferringStatus());
         psiTransferringOrder.setRemarks(psiTransferringOrderUpdateStatusDTO.getRemarks());
         psiTransferringOrder.setUpdateBy(FndSecurityContextUtil.getContext().getId());
+        psiTransferringOrder.setGmtModified(new Date());
 
         this.updateById(psiTransferringOrder);
 
