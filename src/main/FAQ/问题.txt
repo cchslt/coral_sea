@@ -56,5 +56,9 @@
 			rm -rf /var/lib/mysql/* #删除数据目录下文件
 			systemctl restart mysqld
 
+5、创建database
+    CREATE DATABASE psi
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_general_ci;
 
 
