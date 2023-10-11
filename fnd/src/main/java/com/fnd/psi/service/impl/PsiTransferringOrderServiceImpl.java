@@ -66,6 +66,7 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
         queryWrapper.eq(ObjectUtil.isNotNull(psiTransferringOrderQuery.getRelationStorageStatus()), PsiTransferringOrder::getRelationStorageStatus, psiTransferringOrderQuery.getRelationStorageStatus());
         queryWrapper.eq(ObjectUtil.isNotNull(psiTransferringOrderQuery.getWarehouseId()), PsiTransferringOrder::getSourceWarehouseId, psiTransferringOrderQuery.getWarehouseId());
         queryWrapper.eq(ObjectUtil.isNotNull(psiTransferringOrderQuery.getProductSkuId()), PsiTransferringOrder::getProductSkuId, psiTransferringOrderQuery.getProductSkuId());
+        queryWrapper.ne(PsiTransferringOrder::getRelationStorageStatus, StorageStatusEnum.ALL_WAREHOUSING.getCode());
         queryWrapper.eq(PsiTransferringOrder::getIsDeleted, 0);
         queryWrapper.orderByDesc(PsiTransferringOrder::getGmtCreate);
 
