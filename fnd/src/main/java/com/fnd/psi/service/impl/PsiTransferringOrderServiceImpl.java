@@ -148,6 +148,7 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
         this.updateById(psiTransferringOrder);
 
         //生成入库单
+        psiTransferringOrderUpdateDTO.setTransferCode(psiTransferringOrder.getTransferCode());
         PsiStorageOrderDTO psiStorageOrderDTO = buildStorageOrderDTO(psiTransferringOrderUpdateDTO);
         log.info("生成入库单， psiStorageOrderDTO： {}", JSONUtil.toJsonStr(psiStorageOrderDTO));
         psiStorageOrderService.createStorageOrder(psiStorageOrderDTO);
@@ -220,8 +221,8 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
         PsiStorageOrderDTO psiStorageOrderDTO = new PsiStorageOrderDTO();
         psiStorageOrderDTO.setSourceWarehouseId(psiTransferringOrderUpdateDTO.getSourceWarehouseId());
         psiStorageOrderDTO.setWarehouseId(psiTransferringOrderUpdateDTO.getTargetWarehouseId());
-        psiStorageOrderDTO.setSourceId(0L);
-        psiStorageOrderDTO.setSourceCode(null);
+        psiStorageOrderDTO.setSourceId(psiTransferringOrderUpdateDTO.getId() == null ? 0L : psiTransferringOrderUpdateDTO.getId());
+        psiStorageOrderDTO.setSourceCode(psiTransferringOrderUpdateDTO.getTransferCode());
         psiStorageOrderDTO.setSourceBusinessTime(new Date());
         psiStorageOrderDTO.setProductSkuId(psiTransferringOrderUpdateDTO.getSkuId());
         psiStorageOrderDTO.setProductSkuCode(psiProductSku.getSkuCode());

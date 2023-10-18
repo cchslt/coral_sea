@@ -71,4 +71,9 @@ public class PsiTransferringOrderUpdateDTO extends BaseDTO {
     @ApiModelProperty("备注")
     private String remarks;
 
+    /**
+     * 调拨单编码
+     */
+    private String transferCode;
+
 }
