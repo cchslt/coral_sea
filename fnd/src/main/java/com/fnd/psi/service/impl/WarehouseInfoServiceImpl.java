@@ -171,6 +171,7 @@ public class WarehouseInfoServiceImpl extends ServiceImpl<WarehouseInfoMapper, W
          * 建立用户与仓库的绑定关系
          */
         warehouseUserRelationService.addUserWarehouseRelation(psiUser.getBelongUserId(), Arrays.asList(warehouseInfo.getId()));
+        warehouseUserRelationService.addUserWarehouseRelation(psiUser.getId(), Arrays.asList(warehouseInfo.getId()));
         psiOutWarehouseUserRelationService.addPsiOutWarehouseUserRelation(psiUser.getBelongUserId(), Arrays.asList(warehouseInfo.getId()));
         psiInWarehouseUserRelationService.addPsiInWarehouseUserRelation(psiUser.getBelongUserId(), Arrays.asList(warehouseInfo.getId()));
 
