@@ -24,6 +24,16 @@ public class PsiTransferringOrderDTO  extends BaseDTO {
     private String transferCode;
 
     /**
+     * 转仓的调拨源单
+     */
+    private Long sourceTransferId;
+
+    /**
+     * 转仓的调拨源单
+     */
+    private String sourceTransferCode;
+
+    /**
      * 调拨源仓库id
      */
     @ApiModelProperty("调拨源仓库id")
@@ -72,6 +82,16 @@ public class PsiTransferringOrderDTO  extends BaseDTO {
      */
     @ApiModelProperty("未入库数量")
     private Integer notYetStorageCount;
+    /**
+     * 转仓数量
+     */
+    @ApiModelProperty("转仓数量")
+    private Integer transportCount;
+    /**
+     * 转仓入库数量
+     */
+    @ApiModelProperty("转仓入库数量")
+    private Integer transportStorageCount;
     /**
      * 调拨单状态
      */

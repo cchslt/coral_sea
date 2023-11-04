@@ -56,7 +56,11 @@ public class PsiMakeProductOrderController {
     @RequestMapping(value = "/transferring", method = RequestMethod.POST)
     @FndPreAuthorize
     public ResultVo<PsiTransferringOrderDTO> transferring(@RequestBody @Validated PsiTransferringOrderUpdateDTO psiTransferringOrderUpdateDTO){
-        return psiTransferringOrderService.transferring(psiTransferringOrderUpdateDTO);
+        if (psiTransferringOrderUpdateDTO.getIsTransport()) {
+            return psiTransferringOrderService.transport(psiTransferringOrderUpdateDTO);
+        } else {
+            return psiTransferringOrderService.transferring(psiTransferringOrderUpdateDTO);
+        }
     }
 
     /**

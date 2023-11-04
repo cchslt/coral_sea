@@ -132,7 +132,8 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
         if (psiTransferringOrder == null) {
             return ResultVoUtil.error("不存在调拨单");
         }
-        if (IntegerUtils.isGreater(psiTransferringOrderUpdateDTO.getProductCount(), psiTransferringOrder.getNotYetStorageCount())) {
+        Integer notYetStorageCount = IntegerUtils.sub(psiTransferringOrder.getNotYetStorageCount(), IntegerUtils.sub(psiTransferringOrder.getTransportCount(), psiTransferringOrder.getTransportStorageCount()));
+        if (IntegerUtils.isGreater(psiTransferringOrderUpdateDTO.getProductCount(), notYetStorageCount)) {
             return ResultVoUtil.error("调拨数量大于待入库的数量， 请重新检查！");
         }
 
@@ -147,6 +148,9 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
         psiTransferringOrder.setRemarks(psiTransferringOrderUpdateDTO.getRemarks());
         this.updateById(psiTransferringOrder);
 
+        //修改源调拨单的数量
+        updateSourceTransfer(psiTransferringOrder.getSourceTransferId(), psiTransferringOrderUpdateDTO.getProductCount());
+
         //生成入库单
         psiTransferringOrderUpdateDTO.setTransferCode(psiTransferringOrder.getTransferCode());
         PsiStorageOrderDTO psiStorageOrderDTO = buildStorageOrderDTO(psiTransferringOrderUpdateDTO);
@@ -154,6 +158,66 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
         psiStorageOrderService.createStorageOrder(psiStorageOrderDTO);
 
         return  resultUtils.returnSuccess(psiStorageOrderDTO);
+    }
+
+
+    @Override
+    public ResultVo<PsiTransferringOrderDTO> transport(PsiTransferringOrderUpdateDTO psiTransferringOrderUpdateDTO) {
+        final PsiTransferringOrder psiTransferringOrder = this.getById(psiTransferringOrderUpdateDTO.getId());
+        if (psiTransferringOrder == null) {
+            return ResultVoUtil.error("不存在调拨单");
+        }
+        Integer notYetStorageCount = IntegerUtils.sub(psiTransferringOrder.getNotYetStorageCount(), IntegerUtils.sub(psiTransferringOrder.getTransportCount(), psiTransferringOrder.getTransportStorageCount()));
+        if (IntegerUtils.isGreater(psiTransferringOrderUpdateDTO.getProductCount(), notYetStorageCount)) {
+            return ResultVoUtil.error("调拨数量大于待入库的数量， 请重新检查！");
+        }
+
+        //更新源调拨单的转仓数量
+        psiTransferringOrder.setTransportCount(IntegerUtils.add(psiTransferringOrder.getTransportCount(), psiTransferringOrderUpdateDTO.getProductCount()));
+        this.updateById(psiTransferringOrder);
+
+        //增加一条调拨单
+        PsiTransferringOrderDTO psiTransferringOrderDTO = new PsiTransferringOrderDTO();
+        psiTransferringOrderDTO.setSourceTransferId(psiTransferringOrder.getId());
+        psiTransferringOrderDTO.setSourceTransferCode(psiTransferringOrder.getTransferCode());
+        psiTransferringOrderDTO.setSourceWarehouseId(psiTransferringOrderUpdateDTO.getTargetWarehouseId());
+        psiTransferringOrderDTO.setProductSkuId(psiTransferringOrder.getProductSkuId());
+        psiTransferringOrderDTO.setProductSkuCode(psiTransferringOrder.getProductSkuCode());
+        psiTransferringOrderDTO.setProductSkuName(psiTransferringOrder.getProductSkuName());
+        psiTransferringOrderDTO.setProductCount(psiTransferringOrderUpdateDTO.getProductCount());
+        psiTransferringOrderDTO.setTransferringStatus(psiTransferringOrderUpdateDTO.getTransportStatus());
+        psiTransferringOrderDTO.setAddType(psiTransferringOrderUpdateDTO.getAddType());
+        psiTransferringOrderDTO.setRemarks(psiTransferringOrderUpdateDTO.getRemarks());
+
+
+        return this.save(psiTransferringOrderDTO);
+    }
+
+
+    @Transactional(rollbackFor = Throwable.class)
+    public void updateSourceTransfer(Long sourceTransferId, Integer productCount) {
+        if (sourceTransferId == null) {
+            return;
+        }
+
+        final PsiTransferringOrder psiTransferringOrder = this.getById(sourceTransferId);
+        if (psiTransferringOrder == null) {
+            log.info("【updateSourceTransfer】 不存在源调拨单，不需要修改");
+            return;
+        }
+
+        psiTransferringOrder.setReceivedStorageCount(IntegerUtils.add(psiTransferringOrder.getReceivedStorageCount(), productCount));
+        psiTransferringOrder.setNotYetStorageCount(IntegerUtils.sub(psiTransferringOrder.getNotYetStorageCount(), productCount));
+        psiTransferringOrder.setTransportStorageCount(IntegerUtils.add(psiTransferringOrder.getTransportStorageCount(), productCount));
+        psiTransferringOrder.setRelationStorageStatus(StorageStatusEnum.PARTIAL_WAREHOUSING.getCode());
+        if (IntegerUtils.isEquality(psiTransferringOrder.getReceivedStorageCount(), psiTransferringOrder.getProductCount())) {
+            psiTransferringOrder.setRelationStorageStatus(StorageStatusEnum.ALL_WAREHOUSING.getCode());
+        }
+
+        psiTransferringOrder.setGmtModified(new Date());
+        this.updateById(psiTransferringOrder);
+
+        updateSourceTransfer(psiTransferringOrder.getSourceTransferId(), productCount);
     }
 
     @Override

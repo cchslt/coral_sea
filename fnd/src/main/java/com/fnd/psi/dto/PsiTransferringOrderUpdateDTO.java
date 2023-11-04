@@ -76,4 +76,10 @@ public class PsiTransferringOrderUpdateDTO extends BaseDTO {
      */
     private String transferCode;
 
+    @ApiModelProperty("是否转仓 0：false 1：true")
+    private Boolean isTransport = false;
+
+    @ApiModelProperty("转仓调拨状态")
+    private Integer transportStatus;
+
 }

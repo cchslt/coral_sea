@@ -34,6 +34,15 @@ public class PsiTransferringOrder implements Serializable {
      */
     private String transferCode;
 
+    /**
+     * 转仓的调拨源单
+     */
+    private Long sourceTransferId;
+
+    /**
+     * 转仓的调拨源单
+     */
+    private String sourceTransferCode;
 
     /**
      *  调拨源仓库id
@@ -90,6 +99,15 @@ public class PsiTransferringOrder implements Serializable {
      */
     private Integer notYetStorageCount;
 
+    /**
+     * 转仓数量
+     */
+    private Integer transportCount;
+
+    /**
+     * 转仓入库数量
+     */
+    private Integer transportStorageCount;
 
     /**
      *  调拨单状态

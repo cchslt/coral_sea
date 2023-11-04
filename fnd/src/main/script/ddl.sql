@@ -465,3 +465,10 @@ CREATE TABLE `t_warehouse_user_relation` (
   KEY `index_user_id` (`user_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=837 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='卖家仓库关系配置表';
 
+
+
+ALTER TABLE `t_psi_transferring_order`
+ADD COLUMN `source_transfer_id` bigint NULL COMMENT '转仓的调拨源单' AFTER `transfer_code`,
+ADD COLUMN `source_transfer_code` varchar(255) NULL COMMENT '转仓的调拨源单' AFTER `source_transfer_id`,
+ADD COLUMN `transport_count` int NULL DEFAULT 0 COMMENT '转仓数量' AFTER `not_yet_storage_count`,
+ADD COLUMN `transport_storage_count` int NULL DEFAULT 0 COMMENT '转仓入库数量' AFTER `transport_count`;
