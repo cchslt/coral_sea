@@ -104,6 +104,7 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
             x.setCreateByName(userMap.get(x.getCreateBy()));
             x.setUpdateByName(userMap.get(x.getUpdateBy()));
             x.setSourceWarehouseName(warehouseInfoService.getWarehouseNameById(x.getSourceWarehouseId()));
+            x.setNotYetStorageCount(IntegerUtils.sub(IntegerUtils.sub(x.getProductCount(), x.getTransportCount()), x.getReceivedStorageCount()));
             x.setTransferringStatusList(transferringOrderUpdateStatusMap.get(x.getId()));
         });
 
@@ -140,7 +141,7 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
         psiTransferringOrder.setReceivedStorageCount(IntegerUtils.add(psiTransferringOrder.getReceivedStorageCount(), psiTransferringOrderUpdateDTO.getProductCount()));
         psiTransferringOrder.setNotYetStorageCount(IntegerUtils.sub(psiTransferringOrder.getNotYetStorageCount(), psiTransferringOrderUpdateDTO.getProductCount()));
         psiTransferringOrder.setRelationStorageStatus(StorageStatusEnum.PARTIAL_WAREHOUSING.getCode());
-        if (IntegerUtils.isEquality(psiTransferringOrder.getReceivedStorageCount(), psiTransferringOrder.getProductCount())) {
+        if (IntegerUtils.isEquality(IntegerUtils.add(psiTransferringOrder.getReceivedStorageCount(), psiTransferringOrder.getTransportCount()), psiTransferringOrder.getProductCount())) {
             psiTransferringOrder.setRelationStorageStatus(StorageStatusEnum.ALL_WAREHOUSING.getCode());
         }
         psiTransferringOrder.setUpdateBy(FndSecurityContextUtil.getContext().getId());
@@ -174,6 +175,9 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
 
         //更新源调拨单的转仓数量
         psiTransferringOrder.setTransportCount(IntegerUtils.add(psiTransferringOrder.getTransportCount(), psiTransferringOrderUpdateDTO.getProductCount()));
+        if (IntegerUtils.isEquality(IntegerUtils.add(psiTransferringOrder.getReceivedStorageCount(), psiTransferringOrder.getTransportCount()), psiTransferringOrder.getProductCount())) {
+            psiTransferringOrder.setRelationStorageStatus(StorageStatusEnum.ALL_WAREHOUSING.getCode());
+        }
         this.updateById(psiTransferringOrder);
 
         //增加一条调拨单
@@ -210,7 +214,7 @@ public class PsiTransferringOrderServiceImpl extends ServiceImpl<PsiTransferring
         psiTransferringOrder.setNotYetStorageCount(IntegerUtils.sub(psiTransferringOrder.getNotYetStorageCount(), productCount));
         psiTransferringOrder.setTransportStorageCount(IntegerUtils.add(psiTransferringOrder.getTransportStorageCount(), productCount));
         psiTransferringOrder.setRelationStorageStatus(StorageStatusEnum.PARTIAL_WAREHOUSING.getCode());
-        if (IntegerUtils.isEquality(psiTransferringOrder.getReceivedStorageCount(), psiTransferringOrder.getProductCount())) {
+        if (IntegerUtils.isEquality(IntegerUtils.add(psiTransferringOrder.getReceivedStorageCount(), psiTransferringOrder.getTransportCount()), psiTransferringOrder.getProductCount())) {
             psiTransferringOrder.setRelationStorageStatus(StorageStatusEnum.ALL_WAREHOUSING.getCode());
         }
 
